@@ -1,0 +1,688 @@
+@import "tailwindcss";
+
+/* ============================================================
+   DECOMERCE — "Atelier"
+
+   The visual language, in one paragraph: a dark room lit by one
+   warm lamp. Everything sits on near-black warmed toward brown;
+   the only accent in the entire system is amber. Structure comes
+   from hairline rules and a visible column grid rather than from
+   rounded floating cards, and every photograph is masked into an
+   arch — the same arch as the logo mark.
+   ============================================================ */
+@theme {
+  --font-display: "Playfair Display", ui-serif, Georgia, Cambria, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Ground — warm near-black, never neutral grey. */
+  --color-ink: #0a0705;
+  --color-ash-950: #110c08;
+  --color-ash-900: #181109;
+  --color-ash-800: #23180e;
+  --color-ash-700: #33220f;
+
+  /* The one accent. */
+  --color-ember-700: #8f4708;
+  --color-ember-600: #c2620a;
+  --color-ember-500: #e07b10;
+  --color-ember-400: #ff9c2b;
+  --color-ember-300: #ffc27a;
+  --color-ember-200: #ffdcb0;
+
+  --color-mist: #f2ebe3;
+  --color-haze: #a89689;
+}
+
+:root {
+  --shell: 1400px;
+  --nav-h: 84px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --page-depth: 0;
+
+  /* Pointer position, published by the backdrop for the lamplight. */
+  --lamp-x: 50%;
+  --lamp-y: 30%;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+* {
+  border-color: rgba(255, 194, 122, 0.12);
+}
+
+html {
+  background-color: var(--color-ink);
+  -webkit-text-size-adjust: 100%;
+  /* `clip` (not `hidden`) contains sideways reveal offsets without turning the
+     root into a scroll container — position: sticky keeps working. */
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background-color: var(--color-ink);
+  color: var(--color-mist);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  letter-spacing: -0.008em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+::selection {
+  background: rgba(255, 156, 43, 0.32);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ink);
+}
+::-webkit-scrollbar-thumb {
+  background: #3a2410;
+  border: 3px solid var(--color-ink);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ember-600);
+}
+
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+  letter-spacing: inherit;
+}
+
+:focus-visible {
+  outline: 1px solid var(--color-ember-400);
+  outline-offset: 3px;
+}
+
+/* ============================================================
+   Backdrop — one lamp in a dark room.
+   No drifting orbs and no particle field: the whole atmosphere is
+   three static gradient layers plus a lamplight that tracks the
+   pointer, which costs one composited layer instead of a canvas
+   repainting on every frame.
+   ============================================================ */
+.site-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(140% 100% at 50% 120%, #1d1207 0%, transparent 55%),
+    radial-gradient(100% 70% at 82% -10%, #2c1a08 0%, transparent 60%),
+    linear-gradient(180deg, #0d0906 0%, #0a0705 55%, #0d0906 100%);
+}
+
+/* The lamp itself. Follows the pointer on fine-pointer devices; parks in the
+   upper third everywhere else. */
+.backdrop-lamp {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    46vw 46vw at var(--lamp-x) var(--lamp-y),
+    rgba(255, 156, 43, 0.13) 0%,
+    rgba(224, 123, 16, 0.07) 28%,
+    rgba(143, 71, 8, 0.03) 52%,
+    transparent 74%
+  );
+  transition: background 1.4s var(--ease-out-expo);
+  will-change: background;
+}
+
+/* A slow warm wash at the floor of the page, nudged by scroll depth so the
+   room appears to deepen as you go down. */
+.backdrop-floor {
+  position: absolute;
+  inset-inline: -10vw;
+  bottom: -30vh;
+  height: 90vh;
+  background: radial-gradient(
+    60% 100% at 50% 100%,
+    rgba(194, 98, 10, 0.16) 0%,
+    transparent 70%
+  );
+  transform: translate3d(0, calc(var(--page-depth) * -120px), 0);
+  will-change: transform;
+}
+
+/* The column grid, made visible. This is the site's structural signature —
+   the same 12 columns the layout uses, drawn as hairlines. */
+.backdrop-columns {
+  position: absolute;
+  inset: 0;
+  margin-inline: auto;
+  max-width: var(--shell);
+  padding-inline: 1.25rem;
+  display: none;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 194, 122, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: calc(100% / 6) 100%;
+  background-clip: content-box;
+  mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
+}
+@media (min-width: 768px) {
+  .backdrop-columns {
+    display: block;
+    padding-inline: 2rem;
+  }
+}
+
+.backdrop-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    130% 100% at 50% 40%,
+    transparent 42%,
+    rgba(4, 2, 1, 0.8) 100%
+  );
+}
+
+.backdrop-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   Scroll-trigger primitives
+   ============================================================ */
+.parallax-layer {
+  will-change: transform;
+}
+
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.9s var(--ease-out-expo),
+    transform 1.1s var(--ease-out-expo),
+    clip-path 1.2s var(--ease-out-expo);
+}
+/* A GPU layer is handed out only to reveals that are about to fire (armed by
+   the proximity observer in useScroll.js) and taken back once they land. A
+   permanent `will-change` on every reveal on the page exhausts layer memory on
+   mobile GPUs and drops the compositor into software rendering. */
+.reveal.is-armed:not(.is-in) {
+  will-change: opacity, transform;
+}
+.reveal--up { transform: translate3d(0, 42px, 0); }
+.reveal--down { transform: translate3d(0, -32px, 0); }
+.reveal--left { transform: translate3d(-48px, 0, 0); }
+.reveal--right { transform: translate3d(48px, 0, 0); }
+.reveal--scale { transform: scale(0.94); }
+.reveal--fade { transform: none; }
+/* The signature one: an image rises out of its own arch. */
+.reveal--curtain {
+  transform: translate3d(0, 22px, 0);
+  clip-path: inset(0 0 100% 0);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 0 0);
+  will-change: auto;
+}
+
+.rule-draw {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.2s var(--ease-out-expo);
+}
+.rule-draw.is-in { transform: scaleX(1); }
+
+/* Word-by-word headline reveal. The mask pocket is deep because Playfair has
+   real descenders at display sizes — a shallow one clips every "y" and "g". */
+.word-wrap {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.16em;
+  margin-bottom: -0.16em;
+}
+.word {
+  display: inline-block;
+  transform: translateY(112%);
+  transition: transform 1s var(--ease-out-expo);
+}
+.is-in .word { transform: translateY(0); }
+
+/* ============================================================
+   The arch — this site's one shape.
+   Photographs are masked into it; nothing else in the system is
+   allowed to be round.
+   ============================================================ */
+.arch {
+  border-radius: 999px 999px 3px 3px;
+  overflow: hidden;
+}
+.arch-sm {
+  border-radius: 140px 140px 3px 3px;
+  overflow: hidden;
+}
+.arch-flat {
+  border-radius: 999px 999px 0 0;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Surfaces — flat, hairlined, square. No glass, no blur.
+   ============================================================ */
+.panel {
+  background: linear-gradient(180deg, rgba(35, 24, 14, 0.55), rgba(17, 12, 8, 0.75));
+  border: 1px solid rgba(255, 194, 122, 0.11);
+  border-radius: 3px;
+}
+/* The contrast surface: still dark, but pushed toward the accent so a block
+   can step forward without the page ever going light. */
+.panel-ember {
+  background: linear-gradient(160deg, #2a1809 0%, #1a1108 62%, #140e07 100%);
+  border: 1px solid rgba(255, 156, 43, 0.26);
+  border-radius: 3px;
+}
+.panel-solid {
+  background: #100b07;
+  border: 1px solid rgba(255, 194, 122, 0.12);
+  border-radius: 3px;
+}
+
+.rule {
+  height: 1px;
+  width: 100%;
+  background: rgba(255, 194, 122, 0.14);
+}
+.hairline {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 194, 122, 0.42),
+    rgba(255, 194, 122, 0.14) 60%,
+    transparent
+  );
+}
+
+/* The nav is the only surface that floats over moving content, so it is the
+   only one that pays for a backdrop blur. */
+.nav-blur {
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+.perf-lite .nav-blur {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background-color: rgba(10, 7, 5, 0.96);
+}
+
+/* ============================================================
+   Type
+   ============================================================ */
+/* Index labels: mono, wide, tiny. Used for numbers, categories and every
+   piece of chrome that is not prose. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-ember-300);
+}
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(242, 235, 227, 0.42);
+}
+
+/* Headlines are set lowercase on purpose: Playfair's lowercase has the
+   softness the product range is about, and it keeps enormous type from
+   shouting. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 0.94;
+  letter-spacing: -0.028em;
+  text-transform: lowercase;
+}
+.display-md {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+}
+/* The accent voice — one or two words per headline, never a whole line. */
+.italic-accent {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--color-ember-300);
+}
+.lead {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: rgba(242, 235, 227, 0.6);
+}
+
+.text-shimmer {
+  background: linear-gradient(100deg, #fff 0%, #ffdcb0 34%, #ff9c2b 52%, #ffe9cd 72%, #fff 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 7s linear infinite;
+}
+@keyframes shimmer {
+  to { background-position: -220% 0; }
+}
+
+/* ============================================================
+   Buttons — square, letterspaced, no pills anywhere.
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 1.05rem 2rem;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition:
+    background 0.5s var(--ease-out-expo),
+    color 0.5s var(--ease-out-expo),
+    border-color 0.5s ease;
+}
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--color-ember-500);
+  color: #140c04;
+  font-weight: 600;
+  border: 1px solid var(--color-ember-500);
+}
+/* The fill wipes upward on hover rather than the button lifting — the whole
+   system stays put and lets colour do the work. */
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-ember-300);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.55s var(--ease-out-expo);
+}
+.btn-primary:hover::before { transform: scaleY(1); }
+
+.btn-outline {
+  color: var(--color-mist);
+  border: 1px solid rgba(255, 194, 122, 0.3);
+  background: transparent;
+}
+.btn-outline:hover {
+  border-color: var(--color-ember-400);
+  color: var(--color-ember-300);
+  background: rgba(255, 156, 43, 0.07);
+}
+
+/* Text link with a rule that redraws from the left. */
+.link-rule {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--color-ember-300);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding-bottom: 0.45rem;
+}
+.link-rule::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  opacity: 0.45;
+  transform-origin: right;
+  transition: transform 0.55s var(--ease-out-expo), opacity 0.4s ease;
+}
+.link-rule:hover::after {
+  transform: scaleX(0);
+}
+
+/* Nav items get a travelling dot instead of an underline. */
+.nav-link {
+  position: relative;
+  color: rgba(242, 235, 227, 0.62);
+  transition: color 0.35s ease;
+}
+.nav-link::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  width: 3px;
+  height: 3px;
+  margin-left: -1.5px;
+  background: var(--color-ember-400);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.4s ease, transform 0.4s var(--ease-out-expo);
+}
+.nav-link:hover,
+.nav-link[data-active="true"] { color: #fff; }
+.nav-link:hover::before,
+.nav-link[data-active="true"]::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   Product card — portrait, arch-masked, with a quick-add bar that
+   rises out of the bottom of the image.
+   ============================================================ */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.card-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px 999px 3px 3px;
+  background: var(--color-ash-950);
+  aspect-ratio: 4 / 5;
+  border: 1px solid rgba(255, 194, 122, 0.1);
+}
+.card-media img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 1.4s var(--ease-out-expo), opacity 0.7s ease;
+}
+.card:hover .card-media img {
+  transform: scale(1.06);
+}
+/* Warm the photograph toward the site accent on hover so the grid reads as
+   one lit room rather than forty separate pictures. */
+.card-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(10, 7, 5, 0.85) 100%);
+  pointer-events: none;
+}
+.card-tint {
+  position: absolute;
+  inset: 0;
+  background: rgba(194, 98, 10, 0);
+  mix-blend-mode: overlay;
+  transition: background 0.7s ease;
+  pointer-events: none;
+}
+.card:hover .card-tint {
+  background: rgba(224, 123, 16, 0.22);
+}
+
+.card-add {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  transform: translateY(101%);
+  transition: transform 0.55s var(--ease-out-expo);
+}
+.card:hover .card-add,
+.card:focus-within .card-add {
+  transform: translateY(0);
+}
+/* Touch devices never hover, so the bar simply lives in the open there. */
+@media (hover: none) {
+  .card-add { position: static; transform: none; }
+}
+
+/* ============================================================
+   Rails — horizontal, snapping, drag-scrollable.
+   ============================================================ */
+.rail {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 1.25rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.rail::-webkit-scrollbar { display: none; }
+.rail > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
+
+/* ============================================================
+   Marquee — set in the display serif, not in mono chrome.
+   ============================================================ */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee-run 52s linear infinite;
+}
+.marquee:hover { animation-play-state: paused; }
+@keyframes marquee-run {
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+/* ============================================================
+   Misc motion
+   ============================================================ */
+.float-slow { animation: float-slow 9s ease-in-out infinite; }
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.scroll-cue span {
+  display: block;
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, transparent, var(--color-ember-400), transparent);
+  animation: cue 2.4s var(--ease-out-expo) infinite;
+}
+@keyframes cue {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+.loader-sweep { animation: loader-sweep 1.2s var(--ease-out-expo) infinite; }
+@keyframes loader-sweep {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(320%); }
+}
+
+.fade-in-up { animation: fade-in-up 0.45s var(--ease-out-expo) both; }
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translate(-50%, 16px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.scale-in { animation: scale-in 0.5s var(--ease-out-expo) both; }
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.97) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.scrollbar-none { scrollbar-width: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+
+/* Autofill in dark fields */
+input:-webkit-autofill,
+textarea:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-mist);
+  -webkit-box-shadow: 0 0 0 1000px #1a1108 inset;
+  caret-color: var(--color-ember-400);
+}
+
+/* ============================================================
+   Accessibility
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .rule-draw,
+  .word {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+  .marquee,
+  .float-slow,
+  .text-shimmer,
+  .scroll-cue span {
+    animation: none !important;
+  }
+  .backdrop-lamp { transition: none !important; }
+  * { scroll-behavior: auto !important; }
+}
+
+/* ============================================================
+   Low-power tier — `.perf-lite` is set on <html> at boot by main.jsx
+   for small screens, low core counts and save-data. The composition
+   is unchanged; the page simply stops repainting.
+   ============================================================ */
+.perf-lite .backdrop-noise,
+.perf-lite .backdrop-columns {
+  display: none;
+}
+.perf-lite .backdrop-lamp {
+  transition: none;
+}
+.perf-lite .text-shimmer {
+  animation: none;
+}
+.perf-lite .card:hover .card-media img {
+  transform: none;
+}
