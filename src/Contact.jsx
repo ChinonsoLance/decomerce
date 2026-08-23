@@ -35,7 +35,7 @@ export default function Contact() {
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const fieldClass =
-    "w-full border-b border-white/12 bg-transparent py-3 text-sm text-white placeholder-mist/25 outline-none transition-colors duration-500 focus:border-ember-400";
+    "w-full rounded-xl border border-line bg-cloud px-4 py-3 text-sm text-ink outline-none transition-colors duration-300 placeholder:text-haze focus:border-brand-400 focus:bg-canvas";
 
   const channels = [
     {
@@ -62,7 +62,7 @@ export default function Contact() {
       <section className="mx-auto max-w-[var(--shell)] px-5 pb-14 pt-16 sm:px-8 md:pb-20 md:pt-24">
         <Reveal variant="fade">
           <div className="flex items-center gap-4">
-            <span className="h-px w-10 bg-ember-400/70" />
+            <span className="h-px w-10 bg-brand-400" />
             <span className="eyebrow">Get in touch</span>
           </div>
         </Reveal>
@@ -71,7 +71,7 @@ export default function Contact() {
           as="h1"
           text={"let's talk about\nthe room."}
           accent="room."
-          className="display mt-8 text-[clamp(2.8rem,8vw,6rem)] text-white"
+          className="display mt-8 text-[clamp(2.8rem,8vw,5.6rem)]"
           stagger={80}
         />
 
@@ -89,7 +89,7 @@ export default function Contact() {
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           {/* Channels */}
           <div className="lg:col-span-5">
-            <div className="grid gap-px bg-white/8">
+            <div className="grid gap-3">
               {channels.map((c, i) => (
                 <Reveal key={c.label} variant="up" delay={i * 110}>
                   <a
@@ -97,17 +97,17 @@ export default function Contact() {
                     {...(c.external
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
-                    className="group flex items-start gap-5 bg-ink p-7 transition-colors duration-500 hover:bg-ash-950 md:p-9"
+                    className="panel group flex items-start gap-5 p-7 transition-transform duration-500 hover:-translate-y-1.5 md:p-9"
                   >
-                    <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center border border-white/12 transition-colors duration-500 group-hover:border-ember-400/60">
-                      <c.icon className="h-4 w-4 text-ember-400" />
+                    <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-brand-50 transition-colors duration-500 group-hover:bg-brand-100">
+                      <c.icon className="h-4 w-4 text-brand-600" />
                     </span>
                     <div>
                       <p className="label">{c.label}</p>
-                      <p className="display-md mt-2.5 text-xl text-white md:text-2xl">
+                      <p className="display-md mt-2.5 text-xl md:text-2xl">
                         {c.value}
                       </p>
-                      <p className="mt-2.5 text-[13px] leading-relaxed text-mist/50">
+                      <p className="mt-2.5 text-[13px] leading-relaxed text-stone">
                         {c.note}
                       </p>
                     </div>
@@ -116,16 +116,16 @@ export default function Contact() {
               ))}
 
               <Reveal variant="up" delay={220}>
-                <div className="flex items-start gap-5 bg-ink p-7 md:p-9">
-                  <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center border border-white/12">
-                    <Clock className="h-4 w-4 text-ember-400" />
+                <div className="panel flex items-start gap-5 p-7 md:p-9">
+                  <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-brand-50">
+                    <Clock className="h-4 w-4 text-brand-600" />
                   </span>
                   <div>
                     <p className="label">Showroom</p>
-                    <p className="mt-2.5 text-sm text-white/90">
+                    <p className="mt-2.5 text-sm font-semibold text-ink">
                       Monday – Saturday, 9am – 7pm WAT
                     </p>
-                    <p className="mt-2 text-[13px] text-mist/45">
+                    <p className="mt-2 text-[13px] text-haze">
                       Lekki Phase 1, Lagos. Walk in, no appointment needed.
                     </p>
                   </div>
@@ -135,7 +135,7 @@ export default function Contact() {
 
             <Reveal variant="curtain" delay={300} className="mt-8 hidden lg:block">
               <Parallax speed={-0.03}>
-                <div className="arch-flat border border-white/10">
+                <div className="arch-flat bg-sand shadow-[var(--shadow-lift)]">
                   <img
                     src={ROOMS[1].img}
                     alt=""
@@ -149,20 +149,20 @@ export default function Contact() {
 
           {/* Form */}
           <Reveal variant="up" delay={140} className="lg:col-span-7">
-            <div className="panel-ember p-8 md:p-12">
+            <div className="panel p-8 md:p-12">
               <span className="eyebrow">Send a message</span>
-              <h2 className="display mt-5 text-[clamp(1.9rem,3.6vw,2.8rem)] text-white">
+              <h2 className="display mt-5 text-[clamp(1.9rem,3.6vw,2.8rem)]">
                 start an <span className="italic-accent">enquiry</span>
               </h2>
-              <p className="mt-5 text-sm leading-relaxed text-mist/50">
+              <p className="mt-5 text-sm leading-relaxed text-stone">
                 Submitting opens your email app with the details filled in —
                 just press send.
               </p>
 
-              <form onSubmit={handleSubmit} className="mt-11 space-y-8">
-                <div className="grid gap-8 sm:grid-cols-2">
+              <form onSubmit={handleSubmit} className="mt-10 space-y-6">
+                <div className="grid gap-6 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="name" className="label mb-1 block">
+                    <label htmlFor="name" className="label mb-2 block">
                       Full name *
                     </label>
                     <input
@@ -178,7 +178,7 @@ export default function Contact() {
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="label mb-1 block">
+                    <label htmlFor="email" className="label mb-2 block">
                       Email address *
                     </label>
                     <input
@@ -195,7 +195,7 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label htmlFor="room" className="label mb-1 block">
+                  <label htmlFor="room" className="label mb-2 block">
                     Which room?
                   </label>
                   <select
@@ -213,7 +213,7 @@ export default function Contact() {
                       "Whole apartment",
                       "Other",
                     ].map((r) => (
-                      <option key={r} value={r} className="bg-ash-900">
+                      <option key={r} value={r}>
                         {r}
                       </option>
                     ))}
@@ -221,7 +221,7 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="label mb-1 block">
+                  <label htmlFor="message" className="label mb-2 block">
                     Message *
                   </label>
                   <textarea
@@ -242,7 +242,7 @@ export default function Contact() {
                 </button>
 
                 {submitted && (
-                  <p className="flex items-center justify-center gap-2.5 border border-ember-400/30 bg-ember-500/10 px-4 py-3.5 text-sm text-ember-300">
+                  <p className="flex items-center justify-center gap-2.5 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3.5 text-sm font-semibold text-brand-700">
                     <Check className="h-4 w-4" />
                     Email client opened — please review and press send.
                   </p>

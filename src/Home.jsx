@@ -1,21 +1,24 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
   ArrowLeft,
-  Ruler,
+  ArrowUpRight,
   Truck,
   ShieldCheck,
-  Sparkles,
+  Undo2,
+  Headset,
+  Star,
+  ChevronRight,
 } from "lucide-react";
 import {
   PRODUCTS,
-  HERO,
+  HERO_SLIDES,
+  HERO_PROMOS,
   ROOMS,
   TESTIMONIALS,
   CATEGORY_META,
   MARQUEE_TERMS,
-  formatPrice,
 } from "./data";
 import ProductCard from "./components/ProductCard";
 import { SectionHead } from "./components/Section";
@@ -25,117 +28,153 @@ const shopLink = (category) =>
   `/products?category=${encodeURIComponent(category)}`;
 
 /* ============================================================
-   Masthead — one statement, one photograph, one arch.
+   Hero — the storefront banner: category rail, rotating promo,
+   and the three things a shopper wants reassurance about.
    ============================================================ */
-function Masthead({ addToCart }) {
-  const feature = PRODUCTS.find((p) => p.id === HERO.featureId);
+function Hero() {
+  const [index, setIndex] = useState(0);
+  const slide = HERO_SLIDES[index];
+
+  const go = useCallback(
+    (next) => setIndex((i) => (i + next + HERO_SLIDES.length) % HERO_SLIDES.length),
+    []
+  );
+
+  // Auto-advance, reset on every manual move so a click always buys a full
+  // interval before the banner moves on its own again.
+  useEffect(() => {
+    const timer = setTimeout(() => go(1), 6500);
+    return () => clearTimeout(timer);
+  }, [index, go]);
 
   return (
-    <section className="relative mx-auto max-w-[var(--shell)] px-5 pb-20 pt-12 sm:px-8 md:pb-28 md:pt-20">
-      <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
-        {/* Type */}
-        <div className="lg:col-span-6 xl:col-span-6">
-          <Reveal variant="fade">
-            <div className="flex items-center gap-4">
-              <span className="h-px w-10 bg-ember-400/70" />
-              <span className="eyebrow">{HERO.label}</span>
-            </div>
-          </Reveal>
-
-          <SplitHeading
-            as="h1"
-            text={HERO.headline}
-            accent={HERO.accent}
-            className="display mt-8 text-[clamp(3.4rem,9vw,7rem)] text-white"
-            stagger={80}
-          />
-
-          <Reveal variant="up" delay={220}>
-            <p className="lead mt-9 max-w-md">{HERO.sub}</p>
-          </Reveal>
-
-          <Reveal variant="up" delay={340}>
-            <div className="mt-11 flex flex-wrap items-center gap-3">
-              <Link to="/products" className="btn btn-primary">
-                Shop the collection
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-              <Link to="/contact" className="btn btn-outline">
-                Book a styling visit
-              </Link>
-            </div>
-          </Reveal>
-
-          {/* The three things that actually close a sale, on one rule. */}
-          <Reveal variant="up" delay={440}>
-            <div className="mt-14 grid grid-cols-3 border-t border-white/10 pt-6">
-              {[
-                ["48h", "Lagos delivery"],
-                ["100", "Night trial"],
-                ["2yr", "Guarantee"],
-              ].map(([value, label]) => (
-                <div key={label}>
-                  <p className="display-md text-2xl text-ember-300">{value}</p>
-                  <p className="label mt-1.5">{label}</p>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-
-        {/* Plate */}
-        <div className="relative lg:col-span-6 lg:pl-8">
-          <Reveal variant="curtain" duration={1500}>
-            <Parallax speed={-0.05}>
-              <div className="arch relative border border-white/10">
-                <img
-                  src={HERO.img}
-                  alt=""
-                  className="h-[460px] w-full object-cover sm:h-[560px] lg:h-[660px]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent" />
-              </div>
-            </Parallax>
-          </Reveal>
-
-          {/* The floating piece — a real product, addable from the masthead. */}
-          {feature && (
-            <Reveal variant="up" delay={500}>
-              <div className="panel-ember absolute -bottom-6 -left-2 w-[248px] p-4 sm:left-4 lg:-left-6">
-                <div className="flex gap-3.5">
-                  <div className="arch-sm h-20 w-16 flex-shrink-0 border border-white/10">
-                    <img
-                      src={feature.img}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="label">{feature.category}</p>
-                    <p className="display-md mt-1 line-clamp-2 text-[14px] text-white">
-                      {feature.name}
-                    </p>
-                    <p className="mt-1 font-mono text-[12px] text-ember-300">
-                      {formatPrice(feature.price)}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => addToCart(feature)}
-                  className="mt-3.5 w-full bg-ember-400 py-2.5 font-mono text-[10px] uppercase tracking-[0.22em] text-ink transition-colors hover:bg-ember-300"
+    <section className="mx-auto max-w-[var(--shell)] px-5 pt-6 sm:px-8">
+      <div className="grid gap-4 lg:grid-cols-12">
+        {/* Category rail — the shop's whole surface area, one click away. */}
+        <nav className="hidden rounded-2xl border border-line bg-canvas p-2 shadow-[var(--shadow-rest)] xl:col-span-2 xl:block">
+          <p className="label px-3 pb-2 pt-3">All collections</p>
+          <ul>
+            {CATEGORY_META.map((c) => (
+              <li key={c.name}>
+                <Link
+                  to={shopLink(c.name)}
+                  className="group flex items-center justify-between rounded-lg px-3 py-[9px] text-[12.5px] font-medium text-stone transition-colors hover:bg-brand-50 hover:text-brand-700"
                 >
-                  Add to cart
+                  <span className="truncate">{c.name}</span>
+                  <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* The banner */}
+        <div className="relative overflow-hidden rounded-3xl bg-sand shadow-[var(--shadow-lift)] lg:col-span-8 xl:col-span-7">
+          {HERO_SLIDES.map((s, i) => (
+            <img
+              key={s.id}
+              src={s.img}
+              alt=""
+              aria-hidden={i !== index}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[900ms] ease-out ${
+                i === index ? "opacity-100" : "opacity-0"
+              }`}
+              loading={i === 0 ? "eager" : "lazy"}
+            />
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/55 to-transparent" />
+
+          {/* Bottom padding reserves the control strip's row: the copy is
+              vertically centred while the dots and arrows are absolutely
+              positioned, so without it a wrapped CTA runs underneath them. */}
+          <div className="relative flex min-h-[460px] flex-col justify-center px-8 pb-24 pt-10 sm:min-h-[500px] sm:px-12 sm:pb-24 sm:pt-12 lg:min-h-[540px]">
+            <div key={slide.id} className="scale-in max-w-lg">
+              <span className="inline-flex rounded-full bg-brand-500 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white">
+                {slide.label}
+              </span>
+
+              <h1 className="display mt-6 whitespace-pre-line text-[clamp(2.3rem,5.2vw,3.9rem)] text-cloud">
+                {slide.headline}
+              </h1>
+
+              <p className="mt-5 max-w-md text-[15px] leading-[1.8] text-cloud/70">
+                {slide.sub}
+              </p>
+
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Link to={shopLink(slide.link)} className="btn btn-primary">
+                  {slide.cta}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+                <Link
+                  to="/products"
+                  className="btn border border-white/25 bg-white/10 text-cloud backdrop-blur transition-colors hover:border-white/50 hover:bg-white/20"
+                >
+                  All {PRODUCTS.length} pieces
+                </Link>
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className="absolute inset-x-8 bottom-7 flex items-center justify-between sm:inset-x-12">
+              <div className="flex gap-2">
+                {HERO_SLIDES.map((s, i) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setIndex(i)}
+                    aria-label={`Show slide ${i + 1}`}
+                    aria-current={i === index}
+                    className={`h-1.5 rounded-full transition-all duration-500 ${
+                      i === index
+                        ? "w-8 bg-brand-500"
+                        : "w-4 bg-white/40 hover:bg-white/70"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <div className="hidden gap-2 sm:flex">
+                <button
+                  onClick={() => go(-1)}
+                  aria-label="Previous slide"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-white/10 text-cloud backdrop-blur transition-colors hover:bg-white/25"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => go(1)}
+                  aria-label="Next slide"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-white/10 text-cloud backdrop-blur transition-colors hover:bg-white/25"
+                >
+                  <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
-            </Reveal>
-          )}
-
-          <div className="scroll-cue absolute -bottom-16 right-2 hidden flex-col items-center gap-3 lg:flex">
-            <span />
-            <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-mist/35">
-              Scroll
-            </span>
+            </div>
           </div>
+        </div>
+
+        {/* Promo stack */}
+        <div className="grid gap-4 sm:grid-cols-3 lg:col-span-4 lg:grid-cols-1 xl:col-span-3">
+          {HERO_PROMOS.map((promo) => (
+            <Link
+              key={promo.title}
+              to={promo.link}
+              className="group flex flex-col justify-between rounded-2xl border border-line bg-canvas p-5 shadow-[var(--shadow-rest)] transition-all duration-500 hover:-translate-y-1 hover:border-brand-200 hover:shadow-[var(--shadow-lift)]"
+            >
+              <div>
+                <p className="display-md text-[16px] group-hover:text-brand-600">
+                  {promo.title}
+                </p>
+                <p className="mt-2 text-[12.5px] leading-relaxed text-stone">
+                  {promo.body}
+                </p>
+              </div>
+              <span className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-600">
+                {promo.cta}
+                <ArrowRight className="h-3 w-3 transition-transform duration-500 group-hover:translate-x-1" />
+              </span>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
@@ -143,25 +182,143 @@ function Masthead({ addToCart }) {
 }
 
 /* ============================================================
-   Marquee — set in the display serif, not in chrome type.
+   Service strip — the shop's terms, stated once, near the top.
+   ============================================================ */
+const SERVICES = [
+  { icon: Truck, title: "Free Lagos delivery", body: "Carried in and fitted" },
+  { icon: Undo2, title: "100-night trial", body: "Swap the firmness free" },
+  { icon: ShieldCheck, title: "Two-year guarantee", body: "In writing, every piece" },
+  { icon: Headset, title: "Talk to a human", body: "Mon–Sat, 9am – 7pm" },
+];
+
+function ServiceStrip() {
+  return (
+    <section className="mx-auto max-w-[var(--shell)] px-5 pt-8 sm:px-8">
+      <Reveal variant="up">
+        <div className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+          {SERVICES.map((s) => (
+            <div
+              key={s.title}
+              className="flex items-center gap-4 bg-canvas px-5 py-5 transition-colors hover:bg-brand-50"
+            >
+              <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-brand-50">
+                <s.icon className="h-[18px] w-[18px] text-brand-600" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[13px] font-bold text-ink">{s.title}</p>
+                <p className="mt-0.5 truncate text-[12px] text-haze">{s.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
+/* ============================================================
+   Category rail — the fast lane into the shop, before any story.
+   ============================================================ */
+function CategoryRail() {
+  return (
+    <section className="mx-auto max-w-[var(--shell)] px-5 pt-16 sm:px-8 md:pt-20">
+      <div className="mb-8 flex items-end justify-between gap-6">
+        <h2 className="display text-[clamp(1.5rem,3vw,2.1rem)]">
+          shop by <span className="italic-accent">collection</span>
+        </h2>
+        <Link to="/products" className="link-rule">
+          See all
+          <ArrowRight className="h-3 w-3" />
+        </Link>
+      </div>
+
+      <Reveal variant="up">
+        <div className="scrollbar-none flex gap-5 overflow-x-auto pb-2 md:grid md:grid-cols-8 md:gap-4 md:overflow-visible">
+          {CATEGORY_META.map((cat) => {
+            const sample = PRODUCTS.find((p) => p.category === cat.name);
+            return (
+              <Link
+                key={cat.name}
+                to={shopLink(cat.name)}
+                className="group flex w-[104px] flex-shrink-0 flex-col items-center gap-3 md:w-auto"
+              >
+                <span className="relative block h-[104px] w-[104px] overflow-hidden rounded-full border-2 border-transparent bg-sand transition-all duration-500 group-hover:border-brand-400 group-hover:shadow-[var(--shadow-brand)] md:aspect-square md:h-auto md:w-full">
+                  {sample && (
+                    <img
+                      src={sample.img}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
+                      loading="lazy"
+                    />
+                  )}
+                </span>
+                <span className="text-center text-[11px] font-semibold leading-tight text-stone transition-colors group-hover:text-brand-600">
+                  {cat.name}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
+/* ============================================================
+   Marquee — the accent band, the one full-width block of colour.
    ============================================================ */
 function Marquee() {
   const row = [...MARQUEE_TERMS, ...MARQUEE_TERMS];
   return (
-    <div className="relative overflow-hidden border-y border-white/10 py-7">
+    <div className="relative mt-20 overflow-hidden bg-brand-500 py-5 md:mt-24">
       <div className="marquee">
         {row.map((term, i) => (
           <span key={i} className="flex items-center whitespace-nowrap">
-            <span className="display-md px-9 text-[clamp(1.4rem,2.6vw,2.1rem)] text-mist/70">
+            <span className="px-8 text-[clamp(0.95rem,1.7vw,1.25rem)] font-bold uppercase tracking-[0.12em] text-white">
               {term}
             </span>
-            <span className="text-ember-400/80">✳</span>
+            <span className="text-[1.1rem] text-white/60">✳</span>
           </span>
         ))}
       </div>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-ink to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-ink to-transparent" />
     </div>
+  );
+}
+
+/* ============================================================
+   Bestsellers — the row every storefront leads its grid with.
+   ============================================================ */
+function Bestsellers({ onQuickView, wishlist, toggleWishlist }) {
+  const items = PRODUCTS.filter((p) => p.badge === "Bestseller");
+
+  return (
+    <section className="mx-auto max-w-[var(--shell)] px-5 py-20 sm:px-8 md:py-24">
+      <div className="mb-9 flex flex-wrap items-end justify-between gap-5 border-b border-line pb-5">
+        <div>
+          <span className="eyebrow">Most wanted</span>
+          <h2 className="display mt-3 text-[clamp(1.8rem,4vw,2.8rem)]">
+            our <span className="italic-accent">bestsellers</span>
+          </h2>
+        </div>
+        <Link to="/products" className="btn btn-outline">
+          Shop all
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5 lg:gap-5">
+        {items.map((p, i) => (
+          <Reveal key={p.id} variant="up" delay={(i % 5) * 80} className="h-full">
+            <ProductCard
+              product={p}
+              onQuickView={onQuickView}
+              onWishlistToggle={toggleWishlist}
+              isWishlisted={wishlist.includes(p.id)}
+            />
+          </Reveal>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -183,7 +340,7 @@ const BENTO_SPANS = [
 
 function Collections() {
   return (
-    <section className="mx-auto max-w-[var(--shell)] px-5 py-24 sm:px-8 md:py-32">
+    <section className="mx-auto max-w-[var(--shell)] px-5 py-20 sm:px-8 md:py-24">
       <SectionHead
         index="01"
         label="The collections"
@@ -191,7 +348,7 @@ function Collections() {
         aside="Each collection is stocked in the sizes Nigerian homes are actually built around. Pick one to jump straight into it."
       />
 
-      <div className="mt-16 grid auto-rows-[168px] grid-cols-2 gap-3 md:auto-rows-[210px] md:grid-cols-4 md:gap-4">
+      <div className="mt-14 grid auto-rows-[170px] grid-cols-2 gap-3 md:auto-rows-[215px] md:grid-cols-4 md:gap-4">
         {CATEGORY_META.map((cat, i) => {
           const sample = PRODUCTS.find((p) => p.category === cat.name);
           const big = BENTO_SPANS[i].includes("row-span-2");
@@ -204,37 +361,37 @@ function Collections() {
             >
               <Link
                 to={shopLink(cat.name)}
-                className="group relative block h-full overflow-hidden rounded-[3px] border border-white/10"
+                className="group relative block h-full overflow-hidden rounded-2xl border border-line bg-sand shadow-[var(--shadow-rest)] transition-shadow duration-500 hover:shadow-[var(--shadow-lift)]"
               >
                 {sample && (
                   <img
                     src={sample.img}
                     alt=""
-                    className="absolute inset-0 h-full w-full object-cover opacity-55 transition-all duration-[1400ms] ease-out group-hover:scale-105 group-hover:opacity-80"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-105"
                     loading="lazy"
                   />
                 )}
-                <span className="absolute inset-0 bg-gradient-to-t from-ink via-ink/45 to-transparent" />
-                <span className="absolute inset-0 bg-ember-600/0 transition-colors duration-700 group-hover:bg-ember-600/12" />
+                <span className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/25 to-transparent" />
+                <span className="absolute inset-0 bg-brand-500/0 transition-colors duration-700 group-hover:bg-brand-500/15" />
 
-                <span className="absolute left-5 top-4 font-mono text-[10px] tracking-[0.3em] text-ember-300/80">
+                <span className="num absolute left-5 top-4 text-[10px] font-bold tracking-[0.28em] text-white/75">
                   {cat.index}
                 </span>
 
                 <span className="absolute inset-x-5 bottom-4">
                   <span
-                    className={`display-md block text-white ${
-                      big ? "text-2xl md:text-[32px]" : "text-lg md:text-xl"
+                    className={`block font-extrabold leading-tight tracking-[-0.02em] text-white ${
+                      big ? "text-2xl md:text-[30px]" : "text-lg md:text-xl"
                     }`}
                   >
                     {cat.name}
                   </span>
                   {big && (
-                    <span className="mt-2 hidden max-w-xs text-[13px] leading-relaxed text-mist/55 md:block">
+                    <span className="mt-2 hidden max-w-xs text-[13px] leading-relaxed text-white/70 md:block">
                       {cat.blurb}
                     </span>
                   )}
-                  <span className="mt-3 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.24em] text-ember-300 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                  <span className="mt-3 flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] text-brand-200 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                     Browse
                     <ArrowRight className="h-3 w-3" />
                   </span>
@@ -251,7 +408,7 @@ function Collections() {
 /* ============================================================
    New arrivals — a drag rail rather than another grid.
    ============================================================ */
-function Arrivals({ addToCart, onQuickView, wishlist, toggleWishlist }) {
+function Arrivals({ onQuickView, wishlist, toggleWishlist }) {
   const railRef = useRef(null);
   const items = PRODUCTS.filter((p) => p.badge === "New");
 
@@ -264,7 +421,7 @@ function Arrivals({ addToCart, onQuickView, wishlist, toggleWishlist }) {
   };
 
   return (
-    <section className="py-24 md:py-32">
+    <section className="bg-sand/60 py-20 md:py-24">
       <div className="mx-auto max-w-[var(--shell)] px-5 sm:px-8">
         <SectionHead
           index="02"
@@ -277,14 +434,14 @@ function Arrivals({ addToCart, onQuickView, wishlist, toggleWishlist }) {
           <button
             onClick={() => nudge(-1)}
             aria-label="Previous"
-            className="flex h-10 w-10 items-center justify-center border border-white/12 text-mist/60 transition-colors hover:border-ember-400/60 hover:text-ember-300"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-canvas text-stone transition-colors hover:border-brand-300 hover:text-brand-600"
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
           <button
             onClick={() => nudge(1)}
             aria-label="Next"
-            className="flex h-10 w-10 items-center justify-center border border-white/12 text-mist/60 transition-colors hover:border-ember-400/60 hover:text-ember-300"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-canvas text-stone transition-colors hover:border-brand-300 hover:text-brand-600"
           >
             <ArrowRight className="h-4 w-4" />
           </button>
@@ -293,7 +450,7 @@ function Arrivals({ addToCart, onQuickView, wishlist, toggleWishlist }) {
       </div>
 
       {/* Full-bleed on purpose: the rail should run off the edge of the page. */}
-      <div className="mt-8 pl-5 sm:pl-8">
+      <div className="mt-6 pl-5 sm:pl-8">
         <div
           ref={railRef}
           className="rail mx-auto max-w-[calc(var(--shell)-2.5rem)] pr-5 sm:pr-8"
@@ -302,7 +459,6 @@ function Arrivals({ addToCart, onQuickView, wishlist, toggleWishlist }) {
             <div key={p.id} className="w-[248px] sm:w-[286px]">
               <ProductCard
                 product={p}
-                onAddToCart={addToCart}
                 onQuickView={onQuickView}
                 onWishlistToggle={toggleWishlist}
                 isWishlisted={wishlist.includes(p.id)}
@@ -314,13 +470,10 @@ function Arrivals({ addToCart, onQuickView, wishlist, toggleWishlist }) {
           <div className="flex w-[248px] sm:w-[286px]">
             <Link
               to="/products"
-              className="panel group flex w-full flex-col items-start justify-end p-7 transition-colors hover:border-ember-400/40"
+              className="panel-brand group flex w-full flex-col items-start justify-end p-7 transition-transform duration-500 hover:-translate-y-1.5"
             >
-              <p className="display-md text-2xl text-white">
-                All {PRODUCTS.length}
-                <br />
-                pieces
-              </p>
+              <p className="display num text-3xl">All {PRODUCTS.length}</p>
+              <p className="display text-3xl">pieces</p>
               <span className="link-rule mt-5">
                 Enter the shop
                 <ArrowRight className="h-3 w-3 transition-transform duration-500 group-hover:translate-x-1" />
@@ -338,17 +491,17 @@ function Arrivals({ addToCart, onQuickView, wishlist, toggleWishlist }) {
    ============================================================ */
 function Lookbook() {
   return (
-    <section className="border-t border-white/8 py-24 md:py-32">
+    <section className="py-20 md:py-24">
       <div className="mx-auto max-w-[var(--shell)] px-5 sm:px-8">
         <SectionHead
           index="03"
-          label="The lookbook"
-          title={"how a room\ncomes together."}
-          aside="We furnish in a fixed order, and it is never the order people expect. Bed, then windows, then floor and light."
+          label="Buying guide"
+          title={"what to buy\nfirst."}
+          aside="Furnish in this order and the room lands every time. Each step links straight to the collection it needs."
         />
       </div>
 
-      <div className="mt-20 space-y-24 md:mt-24 md:space-y-32">
+      <div className="mt-18 space-y-20 md:mt-20 md:space-y-28">
         {ROOMS.map((room, i) => (
           <div
             key={room.index}
@@ -360,11 +513,11 @@ function Lookbook() {
               className={`lg:col-span-7 ${i % 2 === 1 ? "lg:order-2" : ""}`}
             >
               <Parallax speed={i % 2 === 0 ? -0.04 : 0.04}>
-                <div className="arch-flat border border-white/10">
+                <div className="arch-flat bg-sand shadow-[var(--shadow-lift)]">
                   <img
                     src={room.img}
                     alt=""
-                    className="h-[340px] w-full object-cover md:h-[520px]"
+                    className="h-[340px] w-full object-cover md:h-[500px]"
                     loading="lazy"
                   />
                 </div>
@@ -374,29 +527,28 @@ function Lookbook() {
             <div className={`lg:col-span-5 ${i % 2 === 1 ? "lg:order-1" : ""}`}>
               <Reveal variant="fade">
                 <div className="flex items-center gap-4">
-                  <span className="font-mono text-[11px] tracking-[0.3em] text-ember-400">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-[11px] font-bold text-white">
                     {room.index}
                   </span>
-                  <span className="h-px w-8 bg-ember-400/40" />
                   <span className="label">{room.label}</span>
                 </div>
               </Reveal>
 
               <SplitHeading
                 text={room.title}
-                className="display mt-7 text-[clamp(2rem,4.4vw,3.4rem)] text-white"
+                className="display mt-6 text-[clamp(2rem,4.2vw,3.1rem)]"
               />
 
               <Reveal variant="up" delay={160}>
-                <p className="mt-7 max-w-md text-[15px] leading-[1.9] text-mist/60">
+                <p className="mt-6 max-w-md text-[15px] leading-[1.9] text-stone">
                   {room.copy}
                 </p>
               </Reveal>
 
               <Reveal variant="up" delay={260}>
-                <Link to={shopLink(room.link)} className="link-rule mt-9">
+                <Link to={shopLink(room.link)} className="btn btn-primary mt-8">
                   Shop {room.link.toLowerCase()}
-                  <ArrowRight className="h-3 w-3" />
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </Reveal>
             </div>
@@ -408,18 +560,18 @@ function Lookbook() {
 }
 
 /* ============================================================
-   The promise — the one block that steps forward out of the dark.
+   Why shop here — the one block that goes dark, so it lands.
    ============================================================ */
-const PROMISES = [
-  {
-    icon: Ruler,
-    title: "Measured on site",
-    body: "Drops, stack-back and track are worked out in your room before anything is cut.",
-  },
+const REASONS = [
   {
     icon: Truck,
-    title: "Delivered and set up",
-    body: "Our own team carries it in, fits it, and leaves with the packaging.",
+    title: "We deliver and fit it",
+    body: "Our own van, our own team. Curtains hung, rugs laid, packaging taken away.",
+  },
+  {
+    icon: Undo2,
+    title: "100 nights to change your mind",
+    body: "Sleep on the mattress. If the firmness is wrong we swap it, no restocking fee.",
   },
   {
     icon: ShieldCheck,
@@ -427,53 +579,57 @@ const PROMISES = [
     body: "Against sag, seam failure and hardware faults — not a goodwill gesture.",
   },
   {
-    icon: Sparkles,
-    title: "Styled, not just sold",
-    body: "Leave a styling visit with a palette and a layout. No obligation to buy.",
+    icon: Headset,
+    title: "Everything is in stock",
+    body: "Forty pieces held in Lagos. If it is on the site, it is on the floor.",
   },
 ];
 
-function Promise() {
+function WhyShop() {
   return (
-    <section className="mx-auto max-w-[var(--shell)] px-5 py-24 sm:px-8 md:py-32">
-      <div className="panel-ember relative overflow-hidden p-8 md:p-16">
-        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-ember-500/10 blur-[90px]" />
+    <section className="mx-auto max-w-[var(--shell)] px-5 py-20 sm:px-8 md:py-24">
+      <div className="panel-ink relative overflow-hidden p-8 md:p-16">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-500/25 blur-[90px]" />
 
         <div className="relative grid gap-14 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-5">
             <Reveal variant="fade">
-              <span className="eyebrow">The promise</span>
+              <span className="eyebrow text-brand-300">Why shop here</span>
             </Reveal>
             <SplitHeading
               text={"the part nobody\nphotographs."}
               accent="nobody"
-              className="display mt-7 text-[clamp(2rem,4vw,3.2rem)] text-white"
+              className="display mt-6 text-[clamp(2rem,4vw,3.1rem)] text-cloud"
             />
             <Reveal variant="up" delay={180}>
-              <p className="mt-8 max-w-sm text-[15px] leading-[1.9] text-mist/60">
-                Furnishing a room is mostly logistics. Four things decide
-                whether it goes well, and none of them are the photograph.
+              <p className="mt-7 max-w-sm text-[15px] leading-[1.9] text-cloud/60">
+                Anyone can put a photograph on a website. Four things decide
+                whether the thing actually turns up and lasts.
               </p>
             </Reveal>
             <Reveal variant="up" delay={280}>
-              <Link to="/about" className="link-rule mt-9">
-                How we work
-                <ArrowRight className="h-3 w-3" />
+              <Link to="/products" className="btn btn-primary mt-8">
+                Start shopping
+                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </Reveal>
           </div>
 
-          <div className="grid gap-px bg-white/8 sm:grid-cols-2 lg:col-span-7">
-            {PROMISES.map((p, i) => (
+          <div className="grid gap-3 sm:grid-cols-2 lg:col-span-7">
+            {REASONS.map((p, i) => (
               <Reveal
                 key={p.title}
                 variant="up"
                 delay={i * 90}
-                className="bg-ash-900/60 p-7"
+                className="rounded-2xl border border-white/8 bg-white/[0.04] p-6 transition-colors duration-500 hover:border-brand-400/40 hover:bg-white/[0.07]"
               >
-                <p.icon className="h-5 w-5 text-ember-400" />
-                <h3 className="display-md mt-5 text-lg text-white">{p.title}</h3>
-                <p className="mt-3 text-[13px] leading-[1.8] text-mist/50">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-500/15">
+                  <p.icon className="h-[18px] w-[18px] text-brand-400" />
+                </span>
+                <h3 className="display-md mt-4 text-[17px] text-cloud">
+                  {p.title}
+                </h3>
+                <p className="mt-2.5 text-[13px] leading-[1.8] text-cloud/55">
                   {p.body}
                 </p>
               </Reveal>
@@ -490,32 +646,35 @@ function Promise() {
    ============================================================ */
 function Voices() {
   return (
-    <section className="mx-auto max-w-[var(--shell)] px-5 pb-24 sm:px-8 md:pb-32">
+    <section className="mx-auto max-w-[var(--shell)] px-5 pb-20 sm:px-8 md:pb-24">
       <SectionHead
         index="04"
-        label="From the rooms"
+        label="Verified buyers"
         title={"what people\nsay after."}
-        titleClass="text-[clamp(2rem,5vw,3.6rem)]"
+        titleClass="text-[clamp(2rem,5vw,3.4rem)]"
       />
 
-      <div className="mt-16 grid gap-px bg-white/8 md:grid-cols-3">
+      <div className="mt-14 grid gap-4 md:grid-cols-3">
         {TESTIMONIALS.map((t, i) => (
           <Reveal
             key={t.name}
             variant="up"
             delay={i * 110}
-            className="flex flex-col bg-ink p-8 md:p-10"
+            className="panel flex flex-col p-8 transition-transform duration-500 hover:-translate-y-1.5 md:p-9"
           >
-            <span className="display text-5xl leading-none text-ember-400/40">
-              “
-            </span>
-            <p className="display-md mt-4 flex-1 text-[17px] leading-[1.65] text-mist/85">
+            <div className="flex gap-1">
+              {Array.from({ length: 5 }).map((_, s) => (
+                <Star
+                  key={s}
+                  className="h-3.5 w-3.5 fill-brand-500 text-brand-500"
+                />
+              ))}
+            </div>
+            <p className="display-md mt-5 flex-1 text-[16px] font-semibold leading-[1.7] text-ink-soft">
               {t.quote}
             </p>
-            <div className="mt-8 border-t border-white/8 pt-5">
-              <p className="font-mono text-[11px] tracking-[0.16em] text-white">
-                {t.name}
-              </p>
+            <div className="mt-7 border-t border-line pt-5">
+              <p className="text-[13px] font-bold text-ink">{t.name}</p>
               <p className="label mt-1.5">{t.place}</p>
             </div>
           </Reveal>
@@ -530,40 +689,41 @@ function Voices() {
    ============================================================ */
 function Closing() {
   return (
-    <section className="relative overflow-hidden border-t border-white/8">
+    <section className="relative overflow-hidden border-t border-line">
       <Parallax speed={0.06} className="absolute inset-0">
         <img
           src={ROOMS[0].img}
           alt=""
-          className="h-[120%] w-full object-cover opacity-25"
+          className="h-[120%] w-full object-cover opacity-20"
           loading="lazy"
         />
       </Parallax>
-      <div className="absolute inset-0 bg-gradient-to-b from-ink via-ink/85 to-ink" />
+      <div className="absolute inset-0 bg-gradient-to-b from-cloud via-cloud/88 to-cloud" />
 
-      <div className="relative mx-auto max-w-2xl px-5 py-28 text-center sm:px-8 md:py-40">
+      <div className="relative mx-auto max-w-2xl px-5 py-24 text-center sm:px-8 md:py-32">
         <Reveal variant="fade">
-          <span className="eyebrow">Start a room</span>
+          <span className="eyebrow">Forty pieces, in stock</span>
         </Reveal>
 
         <SplitHeading
-          text={"tell us about\nthe space."}
-          accent="space."
-          className="display mt-8 text-[clamp(2.4rem,6.5vw,4.8rem)] text-white"
+          text={"start with\none room."}
+          accent="one"
+          className="display mt-7 text-[clamp(2.4rem,6.5vw,4.4rem)]"
           stagger={70}
         />
 
         <Reveal variant="up" delay={200}>
-          <p className="lead mx-auto mt-8 max-w-md">
-            Send the room, the window measurements, and roughly what you want it
-            to feel like. We come back with a scheme and a total.
+          <p className="lead mx-auto mt-7 max-w-md">
+            Everything on this site is held in Lagos and delivered by our own
+            team. Browse the shop, or send us a photo of the room and we will
+            tell you what fits.
           </p>
         </Reveal>
 
         <Reveal variant="up" delay={320}>
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/contact" className="btn btn-primary">
-              Book a styling visit
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            <Link to="/products" className="btn btn-primary">
+              Shop the collection
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
             <a
@@ -573,6 +733,7 @@ function Closing() {
               className="btn btn-outline"
             >
               WhatsApp us
+              <ArrowUpRight className="h-3.5 w-3.5" />
             </a>
           </div>
         </Reveal>
@@ -584,25 +745,20 @@ function Closing() {
 /* ============================================================
    Page
    ============================================================ */
-export default function Home({
-  addToCart,
-  onQuickView,
-  wishlist = [],
-  toggleWishlist,
-}) {
+export default function Home({ onQuickView, wishlist = [], toggleWishlist }) {
+  const shopProps = { onQuickView, wishlist, toggleWishlist };
+
   return (
     <div>
-      <Masthead addToCart={addToCart} />
+      <Hero />
+      <ServiceStrip />
+      <CategoryRail />
       <Marquee />
+      <Bestsellers {...shopProps} />
       <Collections />
-      <Arrivals
-        addToCart={addToCart}
-        onQuickView={onQuickView}
-        wishlist={wishlist}
-        toggleWishlist={toggleWishlist}
-      />
+      <Arrivals {...shopProps} />
       <Lookbook />
-      <Promise />
+      <WhyShop />
       <Voices />
       <Closing />
     </div>

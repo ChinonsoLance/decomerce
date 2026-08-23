@@ -1,6 +1,6 @@
-// Footer.jsx — transparent so the room's gradient runs through it.
+// Footer.jsx — the dark full stop at the bottom of a light page.
 import { Link } from "react-router-dom";
-import { ArrowUpRight, ArrowUp, MapPin, Phone } from "lucide-react";
+import { ArrowUpRight, ArrowUp, MapPin, Phone, Mail } from "lucide-react";
 import { Reveal } from "./Motion";
 import { CATEGORY_META } from "../data";
 import logo from "../assets/decomerce.svg";
@@ -16,17 +16,17 @@ const company = [
 
 export default function Footer() {
   return (
-    <footer className="relative z-10 border-t border-white/10">
-      {/* Visit band */}
+    <footer className="relative z-10 bg-ink text-cloud">
       <div className="mx-auto max-w-[var(--shell)] px-5 py-16 sm:px-8 md:py-20">
+        {/* Visit band */}
         <Reveal variant="up">
-          <div className="flex flex-col items-start justify-between gap-8 border-b border-white/10 pb-16 md:flex-row md:items-end">
+          <div className="flex flex-col items-start justify-between gap-8 border-b border-white/10 pb-14 md:flex-row md:items-end">
             <div>
-              <span className="eyebrow">The showroom</span>
-              <p className="display mt-5 text-[clamp(1.9rem,4.4vw,3.2rem)] text-white">
+              <span className="eyebrow text-brand-300">The showroom</span>
+              <p className="display mt-5 text-[clamp(1.9rem,4.4vw,3.1rem)] text-cloud">
                 come and <span className="italic-accent">lie down</span> on it.
               </p>
-              <p className="mt-5 max-w-md text-sm leading-[1.85] text-mist/50">
+              <p className="mt-5 max-w-md text-sm leading-[1.85] text-cloud/55">
                 Every mattress on this site is on the floor in Lekki. Open
                 Monday to Saturday, 9am – 7pm.
               </p>
@@ -42,36 +42,50 @@ export default function Footer() {
                 WhatsApp us
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </a>
-              <Link to="/contact" className="btn btn-outline">
-                Book a styling visit
+              <Link
+                to="/products"
+                className="btn border border-white/20 bg-white/5 text-cloud transition-colors hover:border-brand-400 hover:text-brand-300"
+              >
+                Browse the shop
               </Link>
             </div>
           </div>
         </Reveal>
 
         {/* Columns */}
-        <div className="grid gap-12 pt-16 md:grid-cols-12">
+        <div className="grid gap-12 pt-14 md:grid-cols-12">
           <Reveal variant="up" className="md:col-span-4">
             <div className="flex items-center gap-3">
-              <img src={logo} alt="" className="h-10 w-auto" />
-              <span className="display text-xl text-white">
+              <img
+                src={logo}
+                alt=""
+                className="h-10 w-auto brightness-0 invert"
+              />
+              <span className="display text-xl text-cloud">
                 deco<span className="italic-accent">merce</span>
               </span>
             </div>
-            <p className="mt-6 max-w-xs text-sm leading-[1.85] text-mist/45">
+            <p className="mt-6 max-w-xs text-sm leading-[1.85] text-cloud/50">
               Mattresses, bedding, curtains, rugs and lighting — stocked in
               Lagos, fitted by our own team, guaranteed for two years.
             </p>
 
-            <div className="mt-7 space-y-2.5">
+            <div className="mt-7 space-y-3">
               <a
                 href="tel:+2347047535828"
-                className="flex items-center gap-3 font-mono text-[11px] tracking-[0.14em] text-ember-300"
+                className="flex items-center gap-3 text-[13px] font-semibold text-brand-300 transition-colors hover:text-brand-200"
               >
                 <Phone className="h-3.5 w-3.5" />
                 +234 704 753 5828
               </a>
-              <p className="flex items-center gap-3 font-mono text-[11px] tracking-[0.14em] text-mist/45">
+              <a
+                href="mailto:hello@decomerce.com"
+                className="flex items-center gap-3 text-[13px] text-cloud/50 transition-colors hover:text-cloud"
+              >
+                <Mail className="h-3.5 w-3.5" />
+                hello@decomerce.com
+              </a>
+              <p className="flex items-center gap-3 text-[13px] text-cloud/50">
                 <MapPin className="h-3.5 w-3.5" />
                 Lekki Phase 1, Lagos
               </p>
@@ -85,7 +99,7 @@ export default function Footer() {
                 <li key={c.name}>
                   <Link
                     to={shopLink(c.name)}
-                    className="block border-b border-white/6 py-2.5 text-[13px] text-mist/55 transition-colors duration-300 hover:text-ember-300"
+                    className="block border-b border-white/8 py-2.5 text-[13px] text-cloud/55 transition-colors duration-300 hover:text-brand-300"
                   >
                     {c.name}
                   </Link>
@@ -101,7 +115,7 @@ export default function Footer() {
                 <li key={l.label}>
                   <Link
                     to={l.to}
-                    className="block border-b border-white/6 py-2.5 text-[13px] text-mist/55 transition-colors duration-300 hover:text-ember-300"
+                    className="block border-b border-white/8 py-2.5 text-[13px] text-cloud/55 transition-colors duration-300 hover:text-brand-300"
                   >
                     {l.label}
                   </Link>
@@ -111,7 +125,7 @@ export default function Footer() {
 
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="mt-9 flex h-11 w-11 items-center justify-center border border-white/12 text-mist/55 transition-colors duration-500 hover:border-ember-400/60 hover:text-ember-300"
+              className="mt-9 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-cloud/55 transition-colors duration-500 hover:border-brand-400 hover:text-brand-300"
               aria-label="Back to top"
             >
               <ArrowUp className="h-4 w-4" />
@@ -119,11 +133,11 @@ export default function Footer() {
           </Reveal>
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-7 sm:flex-row">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-mist/30">
+        <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-7 sm:flex-row">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cloud/35">
             © {new Date().getFullYear()} Decomerce
           </p>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-mist/30">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cloud/35">
             Interior &amp; bedding — Lagos, Nigeria
           </p>
         </div>

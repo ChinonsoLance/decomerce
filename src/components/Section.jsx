@@ -13,7 +13,7 @@ export function SectionHead({
   aside,
   as = "h2",
   className = "",
-  titleClass = "text-[clamp(2.4rem,6vw,4.6rem)]",
+  titleClass = "text-[clamp(2.2rem,5.6vw,4.2rem)]",
 }) {
   const ruleRef = useRevealRef(true);
 
@@ -22,7 +22,7 @@ export function SectionHead({
       {/* The index row: number — rule — label, all on one baseline. */}
       <div className="flex items-center gap-5">
         <Reveal variant="fade">
-          <span className="font-mono text-[11px] tracking-[0.3em] text-ember-400">
+          <span className="num text-[11px] font-bold tracking-[0.28em] text-brand-500">
             {index}
           </span>
         </Reveal>
@@ -36,12 +36,12 @@ export function SectionHead({
         <SplitHeading
           as={as}
           text={title}
-          className={`display text-white ${titleClass}`}
+          className={`display ${titleClass}`}
           stagger={70}
         />
         {aside && (
           <Reveal variant="up" delay={160} className="md:max-w-sm md:pb-3">
-            <p className="text-sm leading-[1.85] text-mist/55">{aside}</p>
+            <p className="text-sm leading-[1.85] text-stone">{aside}</p>
           </Reveal>
         )}
       </div>

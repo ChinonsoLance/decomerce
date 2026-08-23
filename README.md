@@ -4,7 +4,8 @@ Interior decoration and bedding storefront — mattresses, bedsheets, duvets,
 pillows, curtains, rugs, throws and lighting.
 
 Static React site: no backend, no admin, no database. The whole catalogue is
-`src/data.js`; the cart lives in `localStorage` and checks out over WhatsApp.
+`src/data.js`. There is **no cart and no pricing** — the site is a browse-and-
+enquire storefront, and every route out of it ends in WhatsApp.
 
 ## Run it
 
@@ -20,11 +21,11 @@ Build for production with `npm run build`. `vercel.json` rewrites every path to
 
 | Path | What it is |
 | --- | --- |
-| `src/data.js` | Products, prices, collections, masthead, lookbook, testimonials. Edit here to change the shop. |
-| `src/index.css` | Design tokens (amber on warm near-black), the arch, surfaces, motion. |
-| `src/App.jsx` | Routing, navbar, cart/saved drawer, toasts. |
-| `src/Home.jsx` | Masthead, marquee, bento collections, arrivals rail, lookbook, promise, testimonials. |
-| `src/Products.jsx` | The shop: sidebar filters, price bands, sort, density toggle. |
+| `src/data.js` | Products, collections, hero slides, lookbook, testimonials. Edit here to change the shop. |
+| `src/index.css` | Design tokens (marigold on warm paper), the arch, surfaces, motion. |
+| `src/App.jsx` | Routing, navbar with search, shortlist drawer, toasts. |
+| `src/Home.jsx` | Hero banner, service strip, category rail, bestsellers, collections, arrivals, buying guide, testimonials. |
+| `src/Products.jsx` | The shop: chips, sidebar filters, sort, density toggle. |
 | `src/components/QuickView.jsx` | The product sheet that opens over the grid. |
 | `src/components/Section.jsx` | The editorial section header — index, rule, label, title. |
 | `src/hooks/useScroll.js` | One rAF-throttled scroll loop shared by every parallax and reveal. |
@@ -32,27 +33,37 @@ Build for production with `npm run build`. `vercel.json` rewrites every path to
 
 ## The design language
 
+- **Light, warm paper.** The ground is `--color-cloud`, never clinical white,
+  and never neutral grey. Contrast comes from `.panel-ink` — a dark block used
+  once or twice a page — rather than from a dark base.
+- **Marigold is the only accent.** There is no second hue in the system.
+- **One typeface.** Montserrat carries every level of hierarchy through weight
+  and letterspacing; there is no serif and no mono.
 - **The arch** is the site's one shape. Photographs are masked into it
-  (`.arch`, `.arch-sm`, `.arch-flat`); nothing else is allowed to be round —
-  buttons and panels sit at a 2–3px radius.
-- **Amber is the only accent.** There is no second hue anywhere in the system,
-  and no light surfaces: contrast comes from `.panel-ember`, a dark surface
-  pushed toward the accent.
-- **Structure is hairlines**, not cards — plus a visible column grid painted by
-  the backdrop, matching the layout's own columns.
-- **Headlines are lowercase Playfair**, with a single italic amber word per
-  headline (`<SplitHeading accent="…">`).
-- **The room is lit by one lamp** that follows the pointer, instead of an
-  animated particle field.
+  (`.arch`, `.arch-sm`, `.arch-flat`). Everything else is a soft card.
+- **Structure is paper cards that lift**, plus hairlines and a visible column
+  grid painted by the backdrop, matching the layout's own columns.
+- **Headlines are lowercase**, with a single italic marigold word per headline
+  (`<SplitHeading accent="…">`).
+- **The room is lit by one warm glow** that follows the pointer.
 
 ## Things worth knowing
 
-- **Prices** are integers in naira in `data.js`; `formatPrice` is the only
-  place currency is rendered.
-- **Collections deep-link**: `/products?category=Mattresses` filters the shop,
-  which is what the homepage cards and footer links use.
+- **No prices anywhere.** `data.js` holds no `price` field and there is no
+  currency formatter. Product enquiries go to WhatsApp with the product name
+  and spec prefilled.
+- **The shortlist replaces the cart.** Hearts on cards save to `localStorage`
+  under `decomerce.saved`; the entry point is a pill that only appears once
+  something is saved, and it sends the whole list as one WhatsApp message.
+- **Component CSS lives in `@layer components`** so Tailwind utilities applied
+  alongside `.display`, `.card` and friends still win the cascade. Moving those
+  rules out of the layer silently breaks every `text-cloud` on a dark panel.
+- **Collections and search deep-link**: `/products?category=Mattresses` and
+  `/products?q=linen` both drive the shop, which is what the homepage tiles,
+  the footer links and the navbar search use.
 - **Photography** is served from the Unsplash CDN via the `img()` helper in
   `data.js`. Swap an id there to change a photo; cards fall back to a
   placeholder if one ever 404s.
 - **Performance tiers**: `main.jsx` adds `perf-lite` to `<html>` on small
-  screens and low-power devices, which drops the grain, beams and dust field.
+  screens and low-power devices, which drops the grain, the column grid and
+  the card zoom.

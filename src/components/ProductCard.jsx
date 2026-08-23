@@ -1,10 +1,15 @@
 import { useState } from "react";
-import { Heart, Maximize2 } from "lucide-react";
-import { formatPrice } from "../data";
+import { Heart, ArrowUpRight } from "lucide-react";
 
+/**
+ * A piece, as a paper card.
+ *
+ * There is no price and no cart on this site — the card's job is to make you
+ * want to open the sheet, so the only affordances are "look closer" and
+ * "keep this for later".
+ */
 export default function ProductCard({
   product,
-  onAddToCart,
   onQuickView,
   onWishlistToggle,
   isWishlisted,
@@ -28,10 +33,10 @@ export default function ProductCard({
 
         {product.badge && (
           <span
-            className={`absolute left-3 top-5 z-10 rounded-[2px] px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.2em] ${
-              product.badge === "Sale"
-                ? "bg-rose-500/90 text-white"
-                : "bg-ember-400 text-ink"
+            className={`absolute left-3 top-4 z-10 rounded-full px-3 py-1 text-[9px] font-bold uppercase tracking-[0.18em] shadow-sm ${
+              product.badge === "New"
+                ? "bg-ink text-cloud"
+                : "bg-brand-500 text-white"
             }`}
           >
             {product.badge}
@@ -43,56 +48,47 @@ export default function ProductCard({
             onClick={() => onWishlistToggle(product.id)}
             aria-label={isWishlisted ? "Remove from saved" : "Save product"}
             aria-pressed={isWishlisted}
-            className="absolute right-3 top-5 z-10 flex h-8 w-8 items-center justify-center rounded-[2px] border border-white/12 bg-ink/70 text-mist/70 transition-colors duration-500 hover:border-ember-400/60 hover:text-ember-300"
+            className="absolute right-3 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-line bg-canvas/90 text-stone shadow-sm backdrop-blur transition-colors duration-500 hover:border-brand-300 hover:text-brand-600"
           >
             <Heart
-              className={`h-3.5 w-3.5 ${
-                isWishlisted ? "fill-ember-400 text-ember-400" : ""
+              className={`h-4 w-4 ${
+                isWishlisted ? "fill-brand-500 text-brand-500" : ""
               }`}
             />
           </button>
         )}
 
         {/* Rises out of the bottom of the arch on hover; always open on touch. */}
-        <div className="card-add z-10 flex gap-px bg-ember-400/15 p-px">
-          {onAddToCart && (
-            <button
-              onClick={() => onAddToCart(product)}
-              className="flex-1 bg-ember-400 py-3 font-mono text-[10px] uppercase tracking-[0.22em] text-ink transition-colors duration-300 hover:bg-ember-300"
-            >
-              Add to cart
-            </button>
-          )}
-          {onQuickView && (
+        {onQuickView && (
+          <div className="card-add z-10">
             <button
               onClick={() => onQuickView(product)}
-              aria-label={`Quick view ${product.name}`}
-              className="flex w-11 items-center justify-center bg-ash-950 text-ember-300 transition-colors duration-300 hover:bg-ash-800"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-ink/92 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-cloud backdrop-blur transition-colors duration-300 hover:bg-brand-500"
             >
-              <Maximize2 className="h-3.5 w-3.5" />
+              View details
+              <ArrowUpRight className="h-3.5 w-3.5" />
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Meta sits on the page, not on a card — the rule below it is the only
-          container the product gets. */}
-      <div className="flex flex-1 flex-col pt-5">
+      <div className="flex flex-1 flex-col px-2 pb-3 pt-4">
         <p className="label">{product.category}</p>
-        <h3 className="display-md mt-2.5 text-[17px] leading-snug text-white transition-colors group-hover:text-ember-200">
+        <h3 className="display-md mt-2 text-[15px] leading-snug transition-colors group-hover:text-brand-600">
           {product.name}
         </h3>
         {product.spec && (
-          <p className="mt-1.5 line-clamp-1 text-[12px] text-mist/40">
+          <p className="mt-1.5 line-clamp-1 text-[12px] text-haze">
             {product.spec}
           </p>
         )}
-        <div className="mt-auto flex items-baseline justify-between gap-3 pt-4">
-          <span className="font-mono text-[13px] text-ember-300">
-            {formatPrice(product.price)}
+
+        <div className="mt-auto pt-4">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-600">
+            In stock
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-400" />
           </span>
         </div>
-        <div className="mt-3 h-px w-full bg-white/8 transition-colors duration-500 group-hover:bg-ember-400/40" />
       </div>
     </article>
   );

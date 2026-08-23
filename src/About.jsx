@@ -47,7 +47,7 @@ export default function About() {
       <section className="mx-auto max-w-[var(--shell)] px-5 pb-20 pt-16 sm:px-8 md:pb-28 md:pt-24">
         <Reveal variant="fade">
           <div className="flex items-center gap-4">
-            <span className="h-px w-10 bg-ember-400/70" />
+            <span className="h-px w-10 bg-brand-400" />
             <span className="eyebrow">Our story</span>
           </div>
         </Reveal>
@@ -56,13 +56,13 @@ export default function About() {
           as="h1"
           text={"a shop built\naround sleep."}
           accent="sleep."
-          className="display mt-8 max-w-4xl text-[clamp(2.8rem,8vw,6rem)] text-white"
+          className="display mt-8 max-w-4xl text-[clamp(2.8rem,8vw,5.6rem)]"
           stagger={80}
         />
 
         <div className="mt-14 grid gap-12 lg:grid-cols-12 lg:gap-16">
           <Reveal variant="up" delay={180} className="lg:col-span-7">
-            <p className="text-base leading-[1.95] text-mist/65">
+            <p className="text-base leading-[1.95] text-stone">
               DECOMERCE started with one stall selling bedsheets, and grew
               outward the way a room does — first the bed, then the windows,
               then the floor, then the light. We still think in that order. Buy
@@ -70,10 +70,10 @@ export default function About() {
               it wrong and nothing else in the room rescues it.
             </p>
 
-            <div className="mt-12 grid grid-cols-2 gap-px bg-white/8 sm:grid-cols-4">
+            <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {STATS.map((s) => (
-                <div key={s.label} className="bg-ink px-4 py-7 text-center">
-                  <p className="display-md text-3xl text-shimmer">
+                <div key={s.label} className="panel px-4 py-7 text-center">
+                  <p className="display num text-3xl text-shimmer">
                     <Counter
                       value={s.value}
                       decimals={s.decimals || 0}
@@ -88,7 +88,7 @@ export default function About() {
 
           <Reveal variant="curtain" delay={280} className="lg:col-span-5">
             <Parallax speed={-0.04}>
-              <div className="arch border border-white/10">
+              <div className="arch bg-sand shadow-[var(--shadow-lift)]">
                 <img
                   src={ROOMS[0].img}
                   alt=""
@@ -101,7 +101,7 @@ export default function About() {
       </section>
 
       {/* ---------- Mission ---------- */}
-      <section className="border-y border-white/8">
+      <section className="border-y border-line bg-sand/50">
         <div className="mx-auto max-w-[var(--shell)] px-5 py-20 sm:px-8 md:py-28">
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
             <div className="lg:col-span-5">
@@ -109,12 +109,12 @@ export default function About() {
               <SplitHeading
                 text={"make a good room\nreachable without\na decorator."}
                 accent="reachable"
-                className="display mt-7 text-[clamp(1.9rem,4vw,3rem)] text-white"
+                className="display mt-7 text-[clamp(1.9rem,4vw,3rem)]"
                 stagger={55}
               />
             </div>
             <Reveal variant="up" delay={200} className="lg:col-span-7 lg:pt-16">
-              <p className="max-w-2xl text-[15px] leading-[1.95] text-mist/60">
+              <p className="max-w-2xl text-[15px] leading-[1.95] text-stone">
                 Most people do not need a design studio. They need honest
                 sizing, materials that survive Lagos, a delivery that turns up,
                 and someone who will say plainly that the rug is too small. That
@@ -135,19 +135,19 @@ export default function About() {
           titleClass="text-[clamp(2.1rem,5vw,3.6rem)]"
         />
 
-        <div className="mt-14 grid gap-px bg-white/8 md:grid-cols-2">
+        <div className="mt-14 grid gap-4 md:grid-cols-2">
           {values.map((v, i) => (
             <Reveal
               key={v.title}
               variant="up"
               delay={(i % 2) * 100}
-              className="bg-ink p-8 md:p-11"
+              className="panel p-8 transition-transform duration-500 hover:-translate-y-1.5 md:p-11"
             >
-              <span className="font-mono text-[10px] tracking-[0.3em] text-ember-400/70">
+              <span className="num text-[10px] font-bold tracking-[0.28em] text-brand-500">
                 {v.index}
               </span>
-              <h3 className="display-md mt-5 text-2xl text-white">{v.title}</h3>
-              <p className="mt-4 text-sm leading-[1.85] text-mist/55">
+              <h3 className="display-md mt-5 text-2xl">{v.title}</h3>
+              <p className="mt-4 text-sm leading-[1.85] text-stone">
                 {v.description}
               </p>
             </Reveal>
@@ -156,7 +156,7 @@ export default function About() {
       </section>
 
       {/* ---------- Timeline ---------- */}
-      <section className="border-t border-white/8">
+      <section className="border-t border-line">
         <div className="mx-auto max-w-[var(--shell)] px-5 py-20 sm:px-8 md:py-28">
           <SectionHead
             index="02"
@@ -171,12 +171,12 @@ export default function About() {
                 key={m.year}
                 variant="up"
                 delay={i * 70}
-                className="group grid grid-cols-[auto_1fr] items-baseline gap-6 border-t border-white/8 py-7 last:border-b sm:grid-cols-[120px_1fr] sm:gap-10"
+                className="group grid grid-cols-[auto_1fr] items-baseline gap-6 border-t border-line py-7 last:border-b sm:grid-cols-[120px_1fr] sm:gap-10"
               >
-                <span className="font-mono text-sm tracking-[0.14em] text-ember-300">
+                <span className="num text-sm font-bold tracking-[0.1em] text-brand-600">
                   {m.year}
                 </span>
-                <p className="text-[15px] leading-[1.85] text-mist/60 transition-colors duration-500 group-hover:text-mist/90">
+                <p className="text-[15px] leading-[1.85] text-stone transition-colors duration-500 group-hover:text-ink">
                   {m.event}
                 </p>
               </Reveal>
@@ -187,11 +187,11 @@ export default function About() {
 
       {/* ---------- CTA ---------- */}
       <section className="mx-auto max-w-[var(--shell)] px-5 py-24 sm:px-8 md:py-32">
-        <div className="panel-ember p-10 text-center md:p-20">
+        <div className="panel-brand p-10 text-center md:p-20">
           <SplitHeading
             text={"ready when\nyou are."}
             accent="ready"
-            className="display text-[clamp(2.2rem,6vw,4.2rem)] text-white"
+            className="display text-[clamp(2.2rem,6vw,4.2rem)]"
           />
           <Reveal variant="up" delay={200}>
             <p className="lead mx-auto mt-8 max-w-md">
