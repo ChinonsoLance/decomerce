@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 .claude/
+
+# Environment files — secrets, never commit
+.env
+*.env
+!*.env.example
