@@ -37,10 +37,14 @@ const productSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Exactly one of these carries the photo: a filename inside the uploads
-    // folder, or an absolute URL to a photo hosted elsewhere.
+    // Where the photo lives. `imageFile` is a filename inside the uploads
+    // folder; `imageUrl` is an absolute URL, either Cloudinary's or one the
+    // admin pasted. `imagePublicId` is Cloudinary's handle, kept so the photo
+    // can be deleted with the product — a pasted URL has none, and is left
+    // alone because it belongs to somebody else's server.
     imageFile: { type: String, trim: true, default: null },
     imageUrl: { type: String, trim: true, default: null },
+    imagePublicId: { type: String, trim: true, default: null },
 
     // Unpublished products stay in the admin list but leave the storefront.
     published: { type: Boolean, default: true, index: true },
@@ -76,6 +80,7 @@ productSchema.set("toJSON", {
     delete ret._id;
     delete ret.imageFile;
     delete ret.imageUrl;
+    delete ret.imagePublicId;
     return ret;
   },
 });

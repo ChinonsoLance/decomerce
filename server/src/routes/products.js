@@ -8,7 +8,7 @@ import Product from "../models/Product.js";
 import { CATEGORIES, BADGES } from "../categories.js";
 import { requireAdmin, isAdminRequest } from "../middleware/auth.js";
 import { singleImage } from "../middleware/upload.js";
-import { deleteUpload } from "../storage.js";
+import { saveImage, removeImage } from "../storage.js";
 import { ApiError } from "../middleware/error.js";
 
 const router = Router();
@@ -137,17 +137,19 @@ router.post("/", requireAdmin, singleImage, async (req, res, next) => {
       throw new ApiError(422, "Attach an image file or give an imageUrl");
     }
 
+    let stored = null;
+
     if (req.file) {
-      fields.imageFile = req.file.filename;
-      fields.imageUrl = null;
+      stored = await saveImage(req.file);
+      Object.assign(fields, stored);
     }
 
     try {
       const product = await Product.create(fields);
       res.status(201).json({ product });
     } catch (err) {
-      // Do not leave an orphaned file behind if the document is rejected.
-      if (req.file) await deleteUpload(req.file.filename);
+      // Do not leave an orphaned photo behind if the document is rejected.
+      if (stored) await removeImage(stored);
       throw err;
     }
   } catch (err) {
@@ -160,25 +162,34 @@ router.patch("/:id", requireAdmin, singleImage, async (req, res, next) => {
   try {
     const product = await findProduct(req.params.id);
     const fields = readFields(req.body);
-    const previousFile = product.imageFile;
+
+    // What the product pointed at before this request, so it can be cleaned up
+    // once the replacement is safely saved.
+    const previous = {
+      imageFile: product.imageFile,
+      imagePublicId: product.imagePublicId,
+    };
 
     // A new photo — by file or by URL — replaces whatever was there.
     if (req.file) {
-      product.imageFile = req.file.filename;
-      product.imageUrl = null;
+      product.set(await saveImage(req.file));
     } else if (fields.imageUrl) {
-      product.imageFile = null;
-      product.imageUrl = fields.imageUrl;
+      product.set({
+        imageFile: null,
+        imageUrl: fields.imageUrl,
+        imagePublicId: null,
+      });
     }
     delete fields.imageUrl;
 
     product.set(fields);
     await product.save();
 
-    // Only bin the old photo once the new state is safely persisted.
-    if (previousFile && previousFile !== product.imageFile) {
-      await deleteUpload(previousFile);
-    }
+    const replaced =
+      previous.imageFile !== product.imageFile ||
+      previous.imagePublicId !== product.imagePublicId;
+
+    if (replaced) await removeImage(previous);
 
     res.json({ product });
   } catch (err) {
@@ -190,7 +201,7 @@ router.delete("/:id", requireAdmin, async (req, res, next) => {
   try {
     const product = await findProduct(req.params.id);
     await product.deleteOne();
-    await deleteUpload(product.imageFile);
+    await removeImage(product);
     res.json({ deleted: product.id });
   } catch (err) {
     next(err);

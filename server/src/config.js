@@ -53,6 +53,18 @@ export const config = {
     .map((s) => s.trim())
     .filter(Boolean),
 
+  // Cloudinary takes over image storage as soon as all three values are set.
+  // Without them the server writes to disk, which is what local work wants.
+  cloudinary: {
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME?.trim() || null,
+    apiKey: process.env.CLOUDINARY_API_KEY?.trim() || null,
+    apiSecret: process.env.CLOUDINARY_API_SECRET?.trim() || null,
+    folder: process.env.CLOUDINARY_FOLDER?.trim() || "decomerce/products",
+    get configured() {
+      return Boolean(this.cloudName && this.apiKey && this.apiSecret);
+    },
+  },
+
   uploads: {
     // Where product photos are written. Point UPLOAD_DIR at a mounted volume
     // when deploying somewhere the filesystem is wiped between releases.

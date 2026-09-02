@@ -13,8 +13,12 @@ import authRoutes from "./routes/auth.js";
 import productRoutes from "./routes/products.js";
 import { notFound, errorHandler } from "./middleware/error.js";
 
+// The admin console lives in the repository's public/ folder, the one Vite
+// copies into the production build. One copy, served three ways: by this server
+// locally, by Vite on :5173, and by Vercel's CDN in production.
 const publicDir = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
+  "..",
   "..",
   "public"
 );
@@ -50,8 +54,8 @@ export function createApp() {
     (_req, res) => res.status(404).json({ error: "Image not found" })
   );
 
-  // The admin console: one page served from this same origin, so it needs no
-  // build step and no CORS exception.
+  // The admin console. Served from this same origin, so it needs no build step
+  // and no CORS exception.
   app.use(express.static(publicDir, { extensions: ["html"] }));
 
   app.get("/api/health", (_req, res) => {

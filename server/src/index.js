@@ -6,7 +6,7 @@
 
 import { createApp } from "./app.js";
 import { connectDatabase, disconnectDatabase } from "./db.js";
-import { ensureUploadDir } from "./storage.js";
+import { ensureUploadDir, driver } from "./storage.js";
 import { config } from "./config.js";
 
 let server;
@@ -19,8 +19,12 @@ try {
   process.exit(1);
 }
 
-await ensureUploadDir();
-console.log(`→ Uploads folder ${config.uploads.dir}`);
+if (driver === "disk") {
+  await ensureUploadDir();
+  console.log(`→ Photos on disk at ${config.uploads.dir}`);
+} else {
+  console.log(`→ Photos on Cloudinary (${config.cloudinary.cloudName})`);
+}
 
 server = createApp().listen(config.port, () => {
   console.log(`→ DECOMERCE API on http://localhost:${config.port}`);

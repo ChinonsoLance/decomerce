@@ -1,25 +1,15 @@
-// upload.js — accepts one product photo per request and writes it to disk.
+// upload.js — accepts one product photo per request.
+//
+// The file is held in memory rather than written straight to disk, because the
+// storage driver decides where it belongs: a folder, or Cloudinary. Uploads are
+// capped well below any sensible memory limit, so a buffer is cheap.
 
 import multer from "multer";
 import { config } from "../config.js";
-import { buildFilename, ensureUploadDir } from "../storage.js";
 import { ApiError } from "./error.js";
 
-const storage = multer.diskStorage({
-  async destination(_req, _file, cb) {
-    try {
-      cb(null, await ensureUploadDir());
-    } catch (err) {
-      cb(err);
-    }
-  },
-  filename(_req, file, cb) {
-    cb(null, buildFilename(file.originalname, file.mimetype));
-  },
-});
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: config.uploads.maxBytes, files: 1 },
   fileFilter(_req, file, cb) {
     if (config.uploads.mimeTypes.includes(file.mimetype)) return cb(null, true);

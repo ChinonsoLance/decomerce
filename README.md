@@ -7,10 +7,15 @@ React storefront, still served entirely from `src/data.js`. There is **no cart
 and no pricing** — the site is a browse-and-enquire storefront, and every route
 out of it ends in WhatsApp.
 
-`server/` adds an admin API on top: an administrator signs in, uploads a product
-name and a photo, and the catalogue changes without a code edit. It returns the
-same shape `src/data.js` exports, so the front end can move over one component
-at a time — or not at all. See [server/README.md](server/README.md).
+`server/` adds an admin API on top: an administrator signs in at `/admin`,
+uploads a product name and a photo, and the catalogue changes without a code
+edit. It returns the same shape `src/data.js` exports, so the front end can move
+over one component at a time — or not at all. See
+[server/README.md](server/README.md).
+
+Storefront, API and admin console share one domain in production: Vercel serves
+the React build, `api/[[...path]].js` runs the same Express app as a serverless
+function, and photos go to Cloudinary because Vercel has no persistent disk.
 
 ## Run it
 
@@ -41,7 +46,9 @@ cd server && npm install && npm run seed && npm start
 | `src/components/Section.jsx` | The editorial section header — index, rule, label, title. |
 | `src/hooks/useScroll.js` | One rAF-throttled scroll loop shared by every parallax and reveal. |
 | `src/components/` | Backdrop, motion primitives, product card, footer. |
-| `server/` | The admin API — products, image uploads, the admin console. |
+| `server/` | The admin API — products, image uploads, admin auth. |
+| `public/admin.html` | The admin console. One file, no build step. |
+| `api/[[...path]].js` | Vercel's entry point into the API. |
 
 ## The design language
 

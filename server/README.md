@@ -4,8 +4,10 @@ The admin API behind the storefront. An administrator signs in, uploads a
 product name and a photo, and the catalogue changes — no code edit, no redeploy.
 
 - **Node + Express + Mongoose**, MongoDB Atlas for the product documents.
-- **Photos live on disk**, in `server/uploads/`. Mongo stores only the filename,
-  so the free-tier 512MB is spent on text and never on images.
+- **Photos never go into Mongo**, so the free-tier 512MB is spent on text. Two
+  storage drivers sit behind one interface, chosen by whether Cloudinary
+  credentials are present: `disk` writes to `server/uploads/` (local work),
+  `cloudinary` uploads to their CDN (production, where there is no disk).
 - **One admin account**, held in the environment rather than in a users
   collection. There is no public sign-up.
 - **The wire format matches `src/data.js`** — `{ id, name, category, spec, badge,
@@ -43,6 +45,10 @@ committed template.
 | `ADMIN_PASSWORD_HASH` | bcrypt hash. Set this in production and delete the plaintext line. |
 | `UPLOAD_DIR` | Where photos are written, relative to `server/`. Defaults to `uploads`. |
 | `MAX_UPLOAD_MB` | Per-image ceiling. Defaults to 5. |
+| `CLOUDINARY_CLOUD_NAME` | Set all three and photos go to Cloudinary instead of disk. |
+| `CLOUDINARY_API_KEY` | From the Cloudinary dashboard. |
+| `CLOUDINARY_API_SECRET` | From the Cloudinary dashboard. Secret — never commit it. |
+| `CLOUDINARY_FOLDER` | Where uploads are filed. Defaults to `decomerce/products`. |
 | `PUBLIC_BASE_URL` | Origin prefixed onto image URLs. Blank gives site-relative paths. |
 | `CORS_ORIGIN` | Comma-separated allowed origins, or `*`. |
 | `DNS_SERVERS` | Resolvers for the Atlas SRV lookup. See the note at the bottom. |
@@ -116,14 +122,15 @@ offending fields when validation is what failed.
 | `src/app.js` | The Express app — CORS, static files, routes, error handling. |
 | `src/config.js` | Every environment value, resolved once and validated at boot. |
 | `src/db.js` | The Atlas connection. |
-| `src/storage.js` | Photos on disk: naming, resolving, deleting. |
+| `src/storage.js` | The storage drivers: disk and Cloudinary, behind one interface. |
 | `src/models/Product.js` | The product document, and the `img` virtual the storefront reads. |
 | `src/models/Counter.js` | The sequence behind the small integer `id`. |
 | `src/routes/products.js` | The catalogue, and the admin writes. |
 | `src/routes/auth.js` | Sign-in and the login brake. |
-| `src/middleware/upload.js` | Multer: one image per request, straight to `uploads/`. |
+| `src/middleware/upload.js` | Multer: one image per request, buffered for whichever driver is active. |
 | `src/seed.js` | Imports the storefront's hardcoded catalogue. |
-| `public/admin.html` | The admin console. One file, no build step. |
+| `../public/admin.html` | The admin console. One file, no build step, served by all three environments. |
+| `../api/[[...path]].js` | The Vercel entry point — hands every `/api/*` request to the same Express app. |
 
 ## Connecting the storefront
 
@@ -141,19 +148,43 @@ Keep `CATEGORY_META`, `HERO_SLIDES` and the rest of the editorial content in
 
 ## Deploying
 
-The uploads folder is ordinary disk, which matters:
+The storefront, the API and the admin console all run on one Vercel project and
+one domain. `vercel.json` sends `/admin` to the static console and everything
+else to the React app; `api/[[...path]].js` catches `/api/*` and hands it to
+this same Express app as a serverless function.
 
-- **A VPS, or any host with a persistent disk** — works as-is.
-- **Render, Railway, Fly** — mount a volume and point `UPLOAD_DIR` at it.
-- **Vercel and other ephemeral hosts** — the filesystem is wiped on every
-  release, so uploaded photos would disappear. Either mount a volume or move the
-  uploads to object storage (S3, Cloudflare R2, Cloudinary). Only `storage.js`
-  would need to change; nothing else in the app knows where the bytes are.
+Vercel has no persistent disk, so **production must use Cloudinary** — set the
+three `CLOUDINARY_*` variables and the disk driver steps aside automatically.
+Without them the API would accept an upload, write it to a temporary
+filesystem, and lose it on the next request.
 
-Before going live: set `ADMIN_PASSWORD_HASH` and drop `ADMIN_PASSWORD`, set a
-fresh `JWT_SECRET`, set `CORS_ORIGIN` to the storefront's real origin, set
-`PUBLIC_BASE_URL` to the API's own origin, and change the Atlas password — the
-one in `.env` has been shared in plaintext.
+Set these in the Vercel dashboard, under Settings → Environment Variables:
+
+| Variable | Value |
+| --- | --- |
+| `MONGODB_URI` | The Atlas connection string. |
+| `JWT_SECRET` | A fresh random string — not the local one. |
+| `ADMIN_EMAIL` | The administrator's address. |
+| `ADMIN_PASSWORD_HASH` | Output of `npm run hash -- "…"`. Do not set `ADMIN_PASSWORD`. |
+| `CLOUDINARY_CLOUD_NAME` | From the Cloudinary dashboard. |
+| `CLOUDINARY_API_KEY` | From the Cloudinary dashboard. |
+| `CLOUDINARY_API_SECRET` | From the Cloudinary dashboard. |
+| `CORS_ORIGIN` | The site's own origin, e.g. `https://decomerce.vercel.app`. |
+
+Atlas also needs to accept connections from Vercel: Network Access → add
+`0.0.0.0/0`. Serverless functions have no fixed egress address, so an IP
+allowlist cannot be narrower than that. The database password is what protects
+it — make it a good one.
+
+`PUBLIC_BASE_URL` can stay unset in production: Cloudinary returns absolute
+URLs, so nothing needs a prefix.
+
+### Hosting it somewhere with a real disk instead
+
+Leave the Cloudinary variables blank and the disk driver takes over, which suits
+a VPS, or Render/Railway/Fly with a mounted volume pointed at by `UPLOAD_DIR`.
+Only the free tiers without a volume are a problem — those wipe the filesystem
+on every deploy.
 
 ## If it will not start
 
