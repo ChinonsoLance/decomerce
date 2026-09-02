@@ -565,7 +565,7 @@ function Lookbook() {
 const REASONS = [
   {
     icon: Truck,
-    title: "We deliver and fit it",
+    title: "We deliver and fit it perfectly",
     body: "Our own van, our own team. Curtains hung, rugs laid, packaging taken away.",
   },
   {
