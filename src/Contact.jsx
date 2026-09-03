@@ -1,8 +1,16 @@
 // Contact.jsx — working email (mailto) plus phone / WhatsApp routes.
 import { useState } from "react";
-import { Phone, MessageCircle, Clock, ArrowRight, Check } from "lucide-react";
+import {
+  Phone,
+  MessageCircle,
+  Mail,
+  MapPin,
+  ArrowRight,
+  Check,
+} from "lucide-react";
 import { Reveal, SplitHeading, Parallax } from "./components/Motion";
 import { ROOMS } from "./data";
+import { PHONES, EMAIL, ADDRESS, HOURS_LONG, WHATSAPP_LINK } from "./contactInfo";
 
 export default function Contact() {
   const [form, setForm] = useState({
@@ -13,17 +21,13 @@ export default function Contact() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  // Your contact details
-  const phoneNumber = "+234 704 753 5828";
-  const whatsappLink = "https://wa.me/2347047535828"; // digits only for WhatsApp
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const { name, email, room, message } = form;
     const subject = `${room} enquiry from ${name}`;
     const body = `Name: ${name}\nEmail: ${email}\nRoom: ${room}\n\n${message}`;
     // Opens the visitor's default email client (Gmail, Outlook, etc.)
-    window.location.href = `mailto:hello@joyceinteriors.com?subject=${encodeURIComponent(
+    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(
       subject
     )}&body=${encodeURIComponent(body)}`;
     setSubmitted(true);
@@ -41,18 +45,34 @@ export default function Contact() {
     {
       icon: Phone,
       label: "Call",
-      value: phoneNumber,
+      value: PHONES[0].display,
       note: "Speak to someone who has seen the piece in person.",
-      href: `tel:${phoneNumber.replace(/\s/g, "")}`,
+      href: `tel:${PHONES[0].tel}`,
+      external: false,
+    },
+    {
+      icon: Phone,
+      label: "Second line",
+      value: PHONES[1].display,
+      note: "For when the first line is engaged — same team, same answers.",
+      href: `tel:${PHONES[1].tel}`,
       external: false,
     },
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      value: phoneNumber,
+      value: PHONES[0].display,
       note: "Send a photo of the room — quickest way to get an answer.",
-      href: whatsappLink,
+      href: WHATSAPP_LINK,
       external: true,
+    },
+    {
+      icon: Mail,
+      label: "Email",
+      value: EMAIL,
+      note: "Best for measurements, floor plans and anything with an attachment.",
+      href: `mailto:${EMAIL}`,
+      external: false,
     },
   ];
 
@@ -118,15 +138,17 @@ export default function Contact() {
               <Reveal variant="up" delay={220}>
                 <div className="panel flex items-start gap-5 p-7 md:p-9">
                   <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-brand-50">
-                    <Clock className="h-4 w-4 text-brand-600" />
+                    <MapPin className="h-4 w-4 text-brand-600" />
                   </span>
                   <div>
                     <p className="label">Showroom</p>
                     <p className="mt-2.5 text-sm font-semibold text-ink">
-                      Monday – Saturday, 9am – 7pm WAT
+                      {ADDRESS.street}
+                      <br />
+                      {ADDRESS.area}
                     </p>
                     <p className="mt-2 text-[13px] text-haze">
-                      Lekki Phase 1, Lagos. Walk in, no appointment needed.
+                      {HOURS_LONG}. Walk in, no appointment needed.
                     </p>
                   </div>
                 </div>

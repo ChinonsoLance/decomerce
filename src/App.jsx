@@ -18,6 +18,7 @@ import Backdrop from "./components/Backdrop";
 import QuickView from "./components/QuickView";
 import { useScrollTick } from "./hooks/useScroll";
 import { PRODUCTS, CATEGORY_META } from "./data";
+import { WHATSAPP } from "./contactInfo";
 
 // -------- IMPORT YOUR LOGO HERE ----------
 import logo from "./assets/joyce-interiors.svg";
@@ -28,8 +29,6 @@ const LINKS = [
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ];
-
-const WHATSAPP = "2347047535828";
 
 // There is no backend, so the saved list lives in the browser. Without this a
 // refresh — or following a link out to WhatsApp and coming back — silently

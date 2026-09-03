@@ -351,7 +351,7 @@ export const HERO_SLIDES = [
     label: "Bedding event",
     headline: "sleep on\nsomething better.",
     accent: "better.",
-    sub: "Pocket-spring, memory foam and hybrid mattresses in every Nigerian bed size — on the floor in Lekki, delivered in 48 hours.",
+    sub: "Pocket-spring, memory foam and hybrid mattresses in every Nigerian bed size — on the floor in Magodo, delivered in 48 hours.",
     cta: "Shop mattresses",
     link: "Mattresses",
     img: img("1616594039964-ae9021a400a0", 1200),

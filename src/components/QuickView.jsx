@@ -16,8 +16,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { CATEGORY_META } from "../data";
-
-const WHATSAPP = "2347047535828";
+import { WHATSAPP } from "../contactInfo";
 
 const PROMISES = [
   { icon: Truck, text: "Free delivery and set-up within Lagos" },

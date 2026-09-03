@@ -10,7 +10,7 @@ const values = [
     index: "01",
     title: "Comfort you can test",
     description:
-      "Every mattress on this site is on the showroom floor in Lekki. Lie on it for as long as you like before you commit to it.",
+      "Every mattress on this site is on the showroom floor in Magodo. Lie on it for as long as you like before you commit to it.",
   },
   {
     index: "02",
@@ -33,7 +33,7 @@ const values = [
 ];
 
 const milestones = [
-  { year: "2017", event: "Opened as a single bedding stall in Lekki, selling sheets and pillows." },
+  { year: "2017", event: "Opened as a single bedding stall in Magodo, selling sheets and pillows." },
   { year: "2019", event: "First mattress lines added, along with our own delivery van." },
   { year: "2021", event: "Made-to-measure curtain workshop opened, with on-site measuring." },
   { year: "2023", event: "Rugs, lighting and wall decor brought the shop up to eight collections." },

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight, ArrowUp, MapPin, Phone, Mail } from "lucide-react";
 import { Reveal } from "./Motion";
 import { CATEGORY_META } from "../data";
+import { PHONES, EMAIL, ADDRESS, HOURS, WHATSAPP_LINK } from "../contactInfo";
 import logo from "../assets/joyce-interiors.svg";
 
 const shopLink = (category) =>
@@ -27,14 +28,15 @@ export default function Footer() {
                 come and <span className="italic-accent">lie down</span> on it.
               </p>
               <p className="mt-5 max-w-md text-sm leading-[1.85] text-cloud/55">
-                Every mattress on this site is on the floor in Lekki. Open
-                Monday to Saturday, 9am – 7pm.
+                Every mattress on this site is on the floor in Magodo. Open
+                {" "}
+                {HOURS}.
               </p>
             </div>
 
             <div className="flex flex-col gap-3">
               <a
-                href="https://wa.me/2347047535828"
+                href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary"
@@ -74,23 +76,30 @@ export default function Footer() {
             </p>
 
             <div className="mt-7 space-y-3">
+              {PHONES.map((p) => (
+                <a
+                  key={p.tel}
+                  href={`tel:${p.tel}`}
+                  className="flex items-center gap-3 text-[13px] font-semibold text-brand-300 transition-colors hover:text-brand-200"
+                >
+                  <Phone className="h-3.5 w-3.5" />
+                  {p.display}
+                </a>
+              ))}
               <a
-                href="tel:+2347047535828"
-                className="flex items-center gap-3 text-[13px] font-semibold text-brand-300 transition-colors hover:text-brand-200"
-              >
-                <Phone className="h-3.5 w-3.5" />
-                +234 704 753 5828
-              </a>
-              <a
-                href="mailto:hello@joyceinteriors.com"
+                href={`mailto:${EMAIL}`}
                 className="flex items-center gap-3 text-[13px] text-cloud/50 transition-colors hover:text-cloud"
               >
                 <Mail className="h-3.5 w-3.5" />
-                hello@joyceinteriors.com
+                {EMAIL}
               </a>
-              <p className="flex items-center gap-3 text-[13px] text-cloud/50">
-                <MapPin className="h-3.5 w-3.5" />
-                Lekki Phase 1, Lagos
+              <p className="flex items-start gap-3 text-[13px] leading-relaxed text-cloud/50">
+                <MapPin className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+                <span>
+                  {ADDRESS.street}
+                  <br />
+                  {ADDRESS.area}
+                </span>
               </p>
             </div>
           </Reveal>

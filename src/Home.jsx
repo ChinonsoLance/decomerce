@@ -22,6 +22,7 @@ import {
 } from "./data";
 import ProductCard from "./components/ProductCard";
 import { SectionHead } from "./components/Section";
+import { WHATSAPP_LINK } from "./contactInfo";
 import { Reveal, SplitHeading, Parallax } from "./components/Motion";
 
 const shopLink = (category) =>
@@ -427,7 +428,7 @@ function Arrivals({ onQuickView, wishlist, toggleWishlist }) {
           index="02"
           label="Just landed"
           title={"new this\nseason."}
-          aside="Fresh into the Lekki showroom. Drag the row, or open a piece to see the full specification."
+          aside="Fresh into the Magodo showroom. Drag the row, or open a piece to see the full specification."
         />
 
         <div className="mt-10 flex items-center gap-2">
@@ -727,7 +728,7 @@ function Closing() {
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
             <a
-              href="https://wa.me/2347047535828"
+              href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-outline"
