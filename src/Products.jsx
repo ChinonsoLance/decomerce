@@ -6,7 +6,6 @@ import {
   SlidersHorizontal,
   LayoutGrid,
   Grid2x2,
-  Check,
 } from "lucide-react";
 import { PRODUCTS, CATEGORIES, CATEGORY_META } from "./data";
 import ProductCard from "./components/ProductCard";
@@ -20,8 +19,6 @@ const SORTS = [
   { key: "name-desc", label: "Name: Z to A" },
 ];
 
-const FLAGS = ["New", "Bestseller"];
-
 const countIn = (name) =>
   name === "All"
     ? PRODUCTS.length
@@ -30,7 +27,6 @@ const countIn = (name) =>
 export default function Products({ onQuickView, wishlist = [], toggleWishlist }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [sort, setSort] = useState("featured");
-  const [flags, setFlags] = useState({ New: false, Bestseller: false });
   const [dense, setDense] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const ruleRef = useRevealRef(true);
@@ -71,26 +67,18 @@ export default function Products({ onQuickView, wishlist = [], toggleWishlist })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const activeCount =
-    (category !== "All" ? 1 : 0) +
-    (query ? 1 : 0) +
-    Object.values(flags).filter(Boolean).length;
+  const activeCount = (category !== "All" ? 1 : 0) + (query ? 1 : 0);
 
   const reset = () => {
-    setFlags({ New: false, Bestseller: false });
     setSearchParams({}, { replace: true });
     setFiltersOpen(false);
   };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const wanted = Object.entries(flags)
-      .filter(([, on]) => on)
-      .map(([k]) => k);
 
     const list = PRODUCTS.filter((p) => {
       if (category !== "All" && p.category !== category) return false;
-      if (wanted.length && !wanted.includes(p.badge)) return false;
       if (!q) return true;
       return (
         p.name.toLowerCase().includes(q) ||
@@ -108,7 +96,7 @@ export default function Products({ onQuickView, wishlist = [], toggleWishlist })
         (a, b) => (b.badge === "New" ? 1 : 0) - (a.badge === "New" ? 1 : 0)
       );
     return list;
-  }, [query, category, sort, flags]);
+  }, [query, category, sort]);
 
   const blurb = CATEGORY_META.find((c) => c.name === category)?.blurb;
 
@@ -244,31 +232,6 @@ export default function Products({ onQuickView, wishlist = [], toggleWishlist })
                     );
                   })}
                 </ul>
-
-                {/* Flags */}
-                <p className="label mt-8">Show only</p>
-                <div className="mt-4 space-y-2">
-                  {FLAGS.map((f) => (
-                    <button
-                      key={f}
-                      onClick={() =>
-                        setFlags((prev) => ({ ...prev, [f]: !prev[f] }))
-                      }
-                      className="flex w-full items-center gap-3 text-left text-[13px] text-stone transition-colors hover:text-ink"
-                    >
-                      <span
-                        className={`flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-[6px] border transition-colors ${
-                          flags[f]
-                            ? "border-brand-500 bg-brand-500 text-white"
-                            : "border-line bg-cloud"
-                        }`}
-                      >
-                        {flags[f] && <Check className="h-3 w-3" />}
-                      </span>
-                      {f}
-                    </button>
-                  ))}
-                </div>
 
                 {activeCount > 0 && (
                   <button onClick={reset} className="link-rule mt-8">
