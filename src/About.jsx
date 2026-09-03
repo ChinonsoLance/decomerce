@@ -63,7 +63,7 @@ export default function About() {
         <div className="mt-14 grid gap-12 lg:grid-cols-12 lg:gap-16">
           <Reveal variant="up" delay={180} className="lg:col-span-7">
             <p className="text-base leading-[1.95] text-stone">
-              Joyce Interiors started with one stall selling bedsheets, and grew
+              Joyce Interiors started with selling curtains, and grew
               outward the way a room does — first the bed, then the windows,
               then the floor, then the light. We still think in that order. Buy
               the mattress properly and everything after it is decoration; get
@@ -156,7 +156,7 @@ export default function About() {
       </section>
 
       {/* ---------- Timeline ---------- */}
-      <section className="border-t border-line">
+      {/* <section className="border-t border-line">
         <div className="mx-auto max-w-[var(--shell)] px-5 py-20 sm:px-8 md:py-28">
           <SectionHead
             index="02"
@@ -183,7 +183,7 @@ export default function About() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ---------- CTA ---------- */}
       <section className="mx-auto max-w-[var(--shell)] px-5 py-24 sm:px-8 md:py-32">
