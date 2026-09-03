@@ -18,40 +18,40 @@ export const PRODUCTS = [
 
   {
     id: 1,
-    name: "Aurelia Pocket-Spring Mattress",
+    name: "Vita Spring Firm",
     category: "Mattress",
-    spec: "6ft × 6ft · Medium-firm · 12in",
+    spec: "6ft × 6ft · Firm · pocket spring",
     badge: "Bestseller",
-    img: img("1505693416388-ac5ce068fe85"),
+    img: "/products/vitafoam/vita-spring-firm.jpg",
   },
   {
     id: 2,
-    name: "Solene Memory Foam Mattress",
+    name: "Vita Spring Flex",
     category: "Mattress",
-    spec: "6ft × 6ft · Soft · 10in",
-    img: img("1631049307264-da0ec9d70304"),
+    spec: "6ft × 6ft · Medium · pocket spring",
+    img: "/products/vitafoam/vita-spring-flex.jpg",
   },
   {
     id: 3,
-    name: "Nocturne Hybrid Mattress",
+    name: "Vita Galaxy Orthopedic",
     category: "Mattress",
-    spec: "4.5ft × 6ft · Firm · 14in",
-    img: img("1617325247661-675ab4b64ae2"),
+    spec: "6ft × 6ft · Extra-firm · orthopaedic",
+    img: "/products/vitafoam/vita-galaxy-orthopedic.jpg",
   },
   {
     id: 4,
-    name: "Meridian Orthopaedic Mattress",
+    name: "Vita Grand",
     category: "Mattress",
-    spec: "4ft × 6ft · Extra-firm · 8in",
-    img: img("1629949009765-40fc74c9ec21"),
+    spec: "6ft × 6ft · Medium-firm · high density",
+    img: "/products/vitafoam/vita-grand.jpg",
   },
   {
     id: 5,
-    name: "Calla Latex Comfort Mattress",
+    name: "Vita Supreme",
     category: "Mattress",
-    spec: "3ft × 6ft · Medium · 10in",
+    spec: "4.5ft × 6ft · Medium · high resilience",
     badge: "New",
-    img: img("1571508601891-ca5e7a713859"),
+    img: "/products/vitafoam/vita-supreme.jpg",
   },
 
   // ── Bedsheet & Duvet ──────────────────────────────────────────────────
@@ -132,35 +132,60 @@ export const PRODUCTS = [
     img: img("1493663284031-b7e3aefcae8e"),
   },
 
-  // ── Pillow / Throw pillow ─────────────────────────────────────────────
+  // ── Pillow ────────────────────────────────────────────────────────────
 
   {
     id: 16,
-    name: "Cloudform Memory Pillow",
+    name: "Vitalex Contour Memory Pillow",
     category: "Pillow",
-    spec: "Contoured · gel-infused",
+    spec: "Contoured · memory foam",
     badge: "Bestseller",
-    img: img("1521783988139-89397d761dce"),
+    img: "/products/vitafoam/vitalex-contour-pillow.jpg",
   },
   {
     id: 17,
-    name: "Down-Alternative Sleep Pillow",
+    name: "Vitalite Memory Pillow",
     category: "Pillow",
-    spec: "Standard · medium loft · pair",
-    img: img("1592078615290-033ee584e267"),
+    spec: "Standard · memory foam · medium loft",
+    img: "/products/vitafoam/vitalite-memory-pillow.jpg",
   },
+  {
+    id: 41,
+    name: "Vitafluffy Microfibre Pillow",
+    category: "Pillow",
+    spec: "Standard · microfibre fill · soft loft",
+    img: "/products/vitafoam/vitafluffy-microfibre-pillow.jpg",
+  },
+  {
+    id: 42,
+    name: "Cool Plus Memory Pillow",
+    category: "Pillow",
+    spec: "Contoured · cooling gel top layer",
+    badge: "New",
+    img: "/products/vitafoam/cool-plus-memory-pillow.jpg",
+  },
+  {
+    id: 43,
+    name: "Vita Quilted Pillow",
+    category: "Pillow",
+    spec: "Standard · quilted cover · medium loft",
+    img: "/products/vitafoam/vita-quilted-pillow.jpg",
+  },
+
+  // ── Throw pillow ──────────────────────────────────────────────────────
+
   {
     id: 18,
     name: "Bolster Lumbar Cushion",
     category: "Throw pillow",
-    spec: '18in × 8in · linen cover',
+    spec: "18in × 8in · linen cover",
     img: img("1616046229478-9901c5536a45"),
   },
   {
     id: 19,
     name: "Terracotta Velvet Cushion",
     category: "Throw pillow",
-    spec: '20in × 20in · feather insert',
+    spec: "20in × 20in · feather insert",
     badge: "New",
     img: img("1555041469-a586c61ea9bc"),
   },
@@ -168,7 +193,7 @@ export const PRODUCTS = [
     id: 20,
     name: "Adire Print Scatter Cushion",
     category: "Throw pillow",
-    spec: '16in × 16in · hand-dyed cotton',
+    spec: "16in × 16in · hand-dyed cotton",
     img: img("1586023492125-27b2c045efd7"),
   },
 
@@ -294,33 +319,11 @@ export const PRODUCTS = [
 
   {
     id: 36,
-    name: "Cumulus Memory Foam Topper",
+    name: "Vitafoam Memory Foam Topper",
     category: "Bed topper",
-    spec: "6ft × 6ft · 3in profile",
-    badge: "New",
-    img: img("1759176170879-6bd7073ab4f4"),
-  },
-  {
-    id: 37,
-    name: "Quilted Microfibre Topper",
-    category: "Bed topper",
-    spec: "4.5ft × 6ft · elasticated skirt",
-    img: img("1581448361195-86be336c9ab8"),
-  },
-  {
-    id: 38,
-    name: "Down-Alternative Featherbed Topper",
-    category: "Bed topper",
-    spec: "6ft × 6ft · 2in loft",
-    img: img("1779958128629-aaf6e187a505"),
-  },
-  {
-    id: 39,
-    name: "Cooling Gel Bed Topper",
-    category: "Bed topper",
-    spec: "4ft × 6ft · perforated gel layer",
+    spec: "2in and 3in profiles · 6ft × 4.5ft to 7ft × 7ft",
     badge: "Bestseller",
-    img: img("1599163666602-ef737d996c16"),
+    img: "/products/vitafoam/memory-foam-topper.jpg",
   },
 ];
 
