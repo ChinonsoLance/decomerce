@@ -27,7 +27,7 @@ if (driver === "disk") {
 }
 
 server = createApp().listen(config.port, () => {
-  console.log(`→ DECOMERCE API on http://localhost:${config.port}`);
+  console.log(`→ Joyce Interiors API on http://localhost:${config.port}`);
   console.log(`→ Admin console  http://localhost:${config.port}/admin`);
 });
 

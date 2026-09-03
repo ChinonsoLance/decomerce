@@ -1,12 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <defs>
-    <linearGradient id="ember" x1="10" y1="6" x2="54" y2="58" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#ffc27a" />
-      <stop offset="0.5" stop-color="#ff9c2b" />
-      <stop offset="1" stop-color="#c2620a" />
-    </linearGradient>
-  </defs>
-  <rect x="2" y="2" width="60" height="60" rx="16" fill="#150c05" />
-  <path d="M20 46V29a12 12 0 0 1 24 0v17" stroke="url(#ember)" stroke-width="4" stroke-linecap="round" />
-  <path d="M14 46h36" stroke="url(#ember)" stroke-width="4" stroke-linecap="round" />
+  <!-- Solid plate at favicon sizes: a 3px outline turns to mush at 16px, so the
+       frame becomes the fill and the letter is knocked out of it. The letter is
+       set a touch heavier than the full lockup for the same reason. -->
+  <rect width="64" height="64" rx="15" fill="#F28C28" />
+  <path d="M36 19 L44 13.5 V36
+           A13 13 0 0 1 18 36
+           V26 H26 V36
+           A6 6 0 0 0 36 36 Z"
+        fill="#FFFFFF" />
 </svg>

@@ -20,7 +20,7 @@ import { useScrollTick } from "./hooks/useScroll";
 import { PRODUCTS, CATEGORY_META } from "./data";
 
 // -------- IMPORT YOUR LOGO HERE ----------
-import logo from "./assets/decomerce.svg";
+import logo from "./assets/joyce-interiors.svg";
 
 const LINKS = [
   { to: "/", label: "Home" },
@@ -56,12 +56,15 @@ function LoadingScreen() {
       <div className="relative flex flex-col items-center gap-9">
         <img
           src={logo}
-          alt="DECOMERCE"
+          alt="Joyce Interiors"
           className="float-slow h-16 w-auto drop-shadow-[0_10px_30px_rgba(23,19,14,0.14)]"
         />
-        <p className="display text-3xl">
-          deco<span className="italic-accent">merce</span>
-        </p>
+        <div className="flex flex-col items-center gap-2">
+          <p className="display text-3xl leading-none">Joyce</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.42em] text-stone">
+            Interiors
+          </p>
+        </div>
         <div className="h-[3px] w-48 overflow-hidden rounded-full bg-sand-deep">
           <div className="loader-sweep h-full w-1/3 rounded-full bg-gradient-to-r from-transparent via-brand-500 to-transparent" />
         </div>
@@ -123,7 +126,7 @@ function SavedDrawer({ saved, onClose, onUnsave, onOpen }) {
   // per line item, so there is nothing to total up here.
   const listText = encodeURIComponent(
     [
-      "Hello DECOMERCE, I am interested in these pieces:",
+      "Hello Joyce Interiors, I am interested in these pieces:",
       "",
       ...saved.map((i) => `• ${i.name}${i.spec ? ` — ${i.spec}` : ""}`),
       "",
@@ -309,11 +312,14 @@ function Navbar() {
           <Link
             to="/"
             className="flex flex-shrink-0 items-center gap-3"
-            aria-label="DECOMERCE home"
+            aria-label="Joyce Interiors home"
           >
             <img src={logo} alt="" className="h-9 w-auto" />
-            <span className="display text-[21px] leading-none">
-              deco<span className="italic-accent">merce</span>
+            <span className="flex flex-col gap-[3px]">
+              <span className="display text-[19px] leading-none">Joyce</span>
+              <span className="text-[8px] font-semibold uppercase leading-none tracking-[0.32em] text-stone">
+                Interiors
+              </span>
             </span>
           </Link>
 

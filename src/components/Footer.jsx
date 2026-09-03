@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight, ArrowUp, MapPin, Phone, Mail } from "lucide-react";
 import { Reveal } from "./Motion";
 import { CATEGORY_META } from "../data";
-import logo from "../assets/decomerce.svg";
+import logo from "../assets/joyce-interiors.svg";
 
 const shopLink = (category) =>
   `/products?category=${encodeURIComponent(category)}`;
@@ -61,8 +61,11 @@ export default function Footer() {
                 alt=""
                 className="h-10 w-auto brightness-0 invert"
               />
-              <span className="display text-xl text-cloud">
-                deco<span className="italic-accent">merce</span>
+              <span className="flex flex-col gap-[3px]">
+                <span className="display text-xl leading-none text-cloud">Joyce</span>
+                <span className="text-[8px] font-semibold uppercase leading-none tracking-[0.32em] text-cloud/45">
+                  Interiors
+                </span>
               </span>
             </div>
             <p className="mt-6 max-w-xs text-sm leading-[1.85] text-cloud/50">
@@ -79,11 +82,11 @@ export default function Footer() {
                 +234 704 753 5828
               </a>
               <a
-                href="mailto:hello@decomerce.com"
+                href="mailto:hello@joyceinteriors.com"
                 className="flex items-center gap-3 text-[13px] text-cloud/50 transition-colors hover:text-cloud"
               >
                 <Mail className="h-3.5 w-3.5" />
-                hello@decomerce.com
+                hello@joyceinteriors.com
               </a>
               <p className="flex items-center gap-3 text-[13px] text-cloud/50">
                 <MapPin className="h-3.5 w-3.5" />
@@ -135,7 +138,7 @@ export default function Footer() {
 
         <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-7 sm:flex-row">
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cloud/35">
-            © {new Date().getFullYear()} Decomerce
+            © {new Date().getFullYear()} Joyce Interiors
           </p>
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cloud/35">
             Interior &amp; bedding — Lagos, Nigeria

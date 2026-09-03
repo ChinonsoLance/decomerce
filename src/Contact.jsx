@@ -23,7 +23,7 @@ export default function Contact() {
     const subject = `${room} enquiry from ${name}`;
     const body = `Name: ${name}\nEmail: ${email}\nRoom: ${room}\n\n${message}`;
     // Opens the visitor's default email client (Gmail, Outlook, etc.)
-    window.location.href = `mailto:hello@decomerce.com?subject=${encodeURIComponent(
+    window.location.href = `mailto:hello@joyceinteriors.com?subject=${encodeURIComponent(
       subject
     )}&body=${encodeURIComponent(body)}`;
     setSubmitted(true);

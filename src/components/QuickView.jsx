@@ -46,7 +46,7 @@ export default function QuickView({
   const blurb = CATEGORY_META.find((c) => c.name === product.category)?.blurb;
 
   const enquiry = encodeURIComponent(
-    `Hello DECOMERCE, I would like to ask about the ${product.name}${
+    `Hello Joyce Interiors, I would like to ask about the ${product.name}${
       product.spec ? ` (${product.spec})` : ""
     }.`
   );

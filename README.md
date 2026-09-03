@@ -1,4 +1,4 @@
-# DECOMERCE
+# Joyce Interiors
 
 Interior decoration and bedding storefront — mattresses, bedsheets, duvets,
 pillows, curtains, rugs, throws and lighting.

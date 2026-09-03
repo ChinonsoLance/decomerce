@@ -1,4 +1,4 @@
-# DECOMERCE — backend
+# Joyce Interiors — backend
 
 The admin API behind the storefront. An administrator signs in, uploads a
 product name and a photo, and the catalogue changes — no code edit, no redeploy.
